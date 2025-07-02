@@ -1,0 +1,42 @@
+[
+  {
+    "name": "sdada",
+    "char": "Modern_Hero_P1",
+    "money": 5,
+    "play_time": 1796.8596510887146,
+    "unlocked_incubators": [
+      true,
+      true,
+      true,
+      true,
+      false,
+      false,
+      false,
+      false
+    ],
+    "inventory": {},
+    "incubator_slots": {
+      "0": {
+        "item_id": "egg_common",
+        "start_time": 1751442351.5895398
+      }
+    },
+    "pets": [
+      {
+        "instance_id": 1,
+        "pet_id": "Bunny",
+        "name": "Oscar",
+        "health": 100,
+        "happiness": 76.8701050000049,
+        "hunger": 53.740209999994555
+      }
+    ],
+    "active_pet_instances": [
+      1
+    ],
+    "last_map": "world",
+    "unlocked_pet_slots": 5
+  },
+  null,
+  null
+]

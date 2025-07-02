@@ -1,0 +1,166 @@
+{
+  "egg_common": {
+    "name": "Common Egg",
+    "description": "A standard pet egg. Who knows what's inside?",
+    "price": 10,
+    "image_path": "SHOP_ITEMS/egg1_1.png",
+    "category": "egg",
+    "data": {
+      "hatch_time_seconds": 60,
+      "possible_pets": [ { "pet_id": "Bunny", "chance": 0.5 }, { "pet_id": "Cat", "chance": 0.2 }, { "pet_id": "Dog", "chance": 0.3 } ]
+    }
+  },
+  "egg_rare": {
+    "name": "Rare Egg",
+    "description": "A colorful egg holding rarer creatures.",
+    "price": 150,
+    "image_path": "SHOP_ITEMS/egg2_1.png",
+    "category": "egg",
+    "data": {
+      "hatch_time_seconds": 360,
+      "possible_pets": [ { "pet_id": "Fox", "chance": 0.3 }, { "pet_id": "Frog", "chance": 0.3 }, { "pet_id": "Hedgehog", "chance": 0.4 } ]
+    }
+  },
+  "egg_epic": {
+    "name": "Epic Egg",
+    "description": "An egg glowing with epic potential.",
+    "price": 750,
+    "image_path": "SHOP_ITEMS/egg3_1.png",
+    "category": "egg",
+    "data": {
+      "hatch_time_seconds": 3600,
+      "possible_pets": [ { "pet_id": "Wolf", "chance": 0.5 }, { "pet_id": "Boar", "chance": 0.3 }, { "pet_id": "Deer", "chance": 0.2 } ]
+    }
+  },
+  "egg_legendary": {
+    "name": "Legendary Egg",
+    "description": "A mysterious egg with legendary energy.",
+    "price": 3000,
+    "image_path": "SHOP_ITEMS/egg4_1.png",
+    "category": "egg",
+    "data": {
+      "hatch_time_seconds": 7200,
+      "possible_pets": [ { "pet_id": "Bear", "chance": 0.4 }, { "pet_id": "Red_panda", "chance": 0.4 }, { "pet_id": "Dog2", "chance": 0.1 }, { "pet_id": "Cat2", "chance": 0.1 } ]
+    }
+  },
+  "food_carrot": {
+    "name": "Carrot",
+    "description": "Crunchy and nutritious. A basic, cost-effective snack.",
+    "price": 5,
+    "image_path": "SHOP_ITEMS/carrot.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 20, "happiness": 5} }
+  },
+  "food_corn": {
+    "name": "Corn",
+    "description": "A sweet and crunchy cob. A simple delight.",
+    "price": 8,
+    "image_path": "SHOP_ITEMS/corn.png",
+    "category": "food",
+    "data": { "effects": { "hunger": 28, "happiness": 5, "health": 1 } }
+  },
+  "food_mushroom": {
+    "name": "Mushroom",
+    "description": "An earthy mushroom. Some pets find it a curious snack.",
+    "price": 8,
+    "image_path": "SHOP_ITEMS/mushroom.png",
+    "category": "food",
+    "data": { "effects": { "hunger": 20, "happiness": 5, "health": 5 } }
+  },
+  "food_apple": {
+    "name": "Apple",
+    "description": "A crisp and juicy fruit. A favorite for many pets.",
+    "price": 10,
+    "image_path": "SHOP_ITEMS/apple.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 25, "happiness": 10, "health": 2} }
+  },
+  "food_bread": {
+    "name": "Bread",
+    "description": "A loaf of fresh bread. Simple but very filling.",
+    "price": 18,
+    "image_path": "SHOP_ITEMS/bread.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 45, "happiness": 8} }
+  },
+  "food_meat": {
+    "name": "Meat",
+    "description": "A chunk of meat. Great energy for hungry pets.",
+    "price": 25,
+    "image_path": "SHOP_ITEMS/meat.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 60, "happiness": 15, "health": 5} }
+  },
+  "food_fish": {
+    "name": "Fish",
+    "description": "Fresh and tasty fish. Cats can not resist it.",
+    "price": 30,
+    "image_path": "SHOP_ITEMS/fish.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 55, "happiness": 20, "health": 8} }
+  },
+  "food_steak": {
+    "name": "Steak",
+    "description": "A premium meal. Fills the belly and lifts the spirits.",
+    "price": 50,
+    "image_path": "SHOP_ITEMS/steak.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 90, "happiness": 20, "health": 15} }
+  },
+  "food_cake": {
+    "name": "Cake",
+    "description": "A sugary treat that gives a nice burst of happiness.",
+    "price": 60,
+    "image_path": "SHOP_ITEMS/cake.png",
+    "category": "food",
+    "data": { "effects": {"hunger": 25, "happiness": 40, "health": 5} }
+  },
+  "toy_ball": {
+    "name": "Bouncy Ball",
+    "description": "A simple but fun ball. Pets love to chase it.",
+    "price": 20,
+    "image_path": "SHOP_ITEMS/toy_ball.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 25} }
+  },
+  "toy_bone": {
+    "name": "Chew Bone",
+    "description": "A sturdy bone, perfect for chewing and keeping pets occupied.",
+    "price": 35,
+    "image_path": "SHOP_ITEMS/toy_bone.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 40} }
+  },
+  "toy_duck": {
+    "name": "Rubber Ducky",
+    "description": "It squeaks! An absolute classic that never gets old.",
+    "price": 45,
+    "image_path": "SHOP_ITEMS/toy_duck.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 50} }
+  },
+  "toy_bear": {
+    "name": "Teddy Bear",
+    "description": "A soft, cuddly companion. Great for a big happiness boost.",
+    "price": 75,
+    "image_path": "SHOP_ITEMS/toy_teddybear.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 70, "health": 5} }
+  },
+  "toy_robot": {
+    "name": "Toy Robot",
+    "description": "A futuristic friend for your pet. It wiggles!",
+    "price": 120,
+    "image_path": "SHOP_ITEMS/toy_robot.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 90} }
+  },
+  "toy_puzzle": {
+    "name": "Rainbow Cube",
+    "description": "The ultimate toy! Fully restores a pet's happiness.",
+    "price": 150,
+    "image_path": "SHOP_ITEMS/toy_cube.png",
+    "category": "toy",
+    "data": { "effects": {"happiness": 100} }
+  }
+}
