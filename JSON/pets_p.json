@@ -5,7 +5,8 @@
     "animation_paths": { "idle": "PET_IDLE/Bunny/", "walk": "PET_WALKING/Bunny/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 5
+    "base_money_per_minute": 5,
+    "scale_modifier": 1
   },
   "Cat": {
     "name": "Cat",
@@ -13,7 +14,8 @@
     "animation_paths": { "idle": "PET_IDLE/Cat/", "walk": "PET_WALKING/Cat/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 6
+    "base_money_per_minute": 6,
+    "scale_modifier": 0.75
   },
   "Dog": {
     "name": "Dog",
@@ -21,7 +23,8 @@
     "animation_paths": { "idle": "PET_IDLE/Dog/", "walk": "PET_WALKING/Dog/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 7
+    "base_money_per_minute": 7,
+    "scale_modifier": 0.75
   },
   "Fox": {
     "name": "Fox",
@@ -29,7 +32,8 @@
     "animation_paths": { "idle": "PET_IDLE/Fox/", "walk": "PET_WALKING/Fox/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 15
+    "base_money_per_minute": 15,
+    "scale_modifier": 1.5
   },
   "Frog": {
     "name": "Frog",
@@ -37,7 +41,8 @@
     "animation_paths": { "idle": "PET_IDLE/Frog/", "walk": "PET_WALKING/Frog/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 12
+    "base_money_per_minute": 12,
+    "scale_modifier": 0.5
   },
   "Hedgehog": {
     "name": "Hedgehog",
@@ -45,7 +50,8 @@
     "animation_paths": { "idle": "PET_IDLE/Hedgehog/", "walk": "PET_WALKING/Hedgehog/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 14
+    "base_money_per_minute": 14,
+    "scale_modifier": 1
   },
   "Wolf": {
     "name": "Wolf",
@@ -53,7 +59,8 @@
     "animation_paths": { "idle": "PET_IDLE/Wolf/", "walk": "PET_WALKING/Wolf/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 30
+    "base_money_per_minute": 30,
+    "scale_modifier": 1.33
   },
   "Boar": {
     "name": "Boar",
@@ -61,7 +68,8 @@
     "animation_paths": { "idle": "PET_IDLE/Boar/", "walk": "PET_WALKING/Boar/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 28
+    "base_money_per_minute": 28,
+    "scale_modifier": 1.33
   },
   "Deer": {
     "name": "Deer",
@@ -69,7 +77,8 @@
     "animation_paths": { "idle": "PET_IDLE/Deer/", "walk": "PET_WALKING/Deer/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 25
+    "base_money_per_minute": 25,
+    "scale_modifier": 1.66
   },
   "Bear": {
     "name": "Bear",
@@ -77,7 +86,8 @@
     "animation_paths": { "idle": "PET_IDLE/Bear/", "walk": "PET_WALKING/Bear/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 55
+    "base_money_per_minute": 55,
+    "scale_modifier": 1.66
   },
   "Dog2": {
     "name": "Dog2",
@@ -85,7 +95,8 @@
     "animation_paths": { "idle": "PET_IDLE/Dog2/", "walk": "PET_WALKING/Dog2/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 50
+    "base_money_per_minute": 50,
+    "scale_modifier": 0.75
   },
   "Cat2": {
     "name": "Cat2",
@@ -93,14 +104,16 @@
     "animation_paths": { "idle": "PET_IDLE/Cat2/", "walk": "PET_WALKING/Cat2/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 50
+    "base_money_per_minute": 50,
+    "scale_modifier": 0.75
   },
   "Red_panda": {
     "name": "Red Panda",
-    "animation_type": "spritesheet",
-    "animation_paths": { "sheet": "PET_IDLE/red_panda.png", "json": "PET_IDLE/red_panda.json" },
+    "animation_type": "frames",
+    "animation_paths": { "idle": "PET_IDLE/Red_Panda/", "walk": "PET_WALKING/Red_Panda/" },
     "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
     "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.02 },
-    "base_money_per_minute": 60
+    "base_money_per_minute": 60,
+    "scale_modifier": 1.2
   }
 }

@@ -2,8 +2,8 @@
   {
     "name": "sdada",
     "char": "Modern_Hero_P1",
-    "money": 5,
-    "play_time": 1796.8596510887146,
+    "money": 1757,
+    "play_time": 16751.761268377304,
     "unlocked_incubators": [
       true,
       true,
@@ -14,11 +14,23 @@
       false,
       false
     ],
-    "inventory": {},
+    "inventory": {
+      "food_carrot": 6,
+      "food_meat": 7,
+      "toy_bone": 4,
+      "food_apple": 2,
+      "toy_bear": 4,
+      "toy_robot": 3,
+      "toy_duck": 3,
+      "food_fish": 2,
+      "food_corn": 1,
+      "food_bread": 1,
+      "food_mushroom": 2
+    },
     "incubator_slots": {
       "0": {
         "item_id": "egg_common",
-        "start_time": 1751442351.5895398
+        "start_time": 1751550190.1672132
       }
     },
     "pets": [
@@ -27,15 +39,93 @@
         "pet_id": "Bunny",
         "name": "Oscar",
         "health": 100,
-        "happiness": 76.8701050000049,
-        "hunger": 53.740209999994555
+        "happiness": 80.20829000003137,
+        "hunger": 78.95213999988752
+      },
+      {
+        "instance_id": 2,
+        "pet_id": "Bunny",
+        "name": "ga",
+        "health": 100,
+        "happiness": 90.02006000002166,
+        "hunger": 83.62567999988791
+      },
+      {
+        "instance_id": 3,
+        "pet_id": "Bunny",
+        "name": "asshole",
+        "health": 100,
+        "happiness": 84.38784000002298,
+        "hunger": 86.77567999988825
+      },
+      {
+        "instance_id": 4,
+        "pet_id": "Bunny",
+        "name": "cc",
+        "health": 46.888259999998354,
+        "happiness": 18.34221000000005,
+        "hunger": 44.35202999999946
+      },
+      {
+        "instance_id": 5,
+        "pet_id": "Dog",
+        "name": "GGWP",
+        "health": 100,
+        "happiness": 99.87278500000019,
+        "hunger": 99.74556999999919
+      },
+      {
+        "instance_id": 6,
+        "pet_id": "Cat",
+        "name": "KSKSSKS",
+        "health": 0,
+        "happiness": 0,
+        "hunger": 0
+      },
+      {
+        "instance_id": 7,
+        "pet_id": "Bunny",
+        "name": "OK",
+        "health": 100,
+        "happiness": 99.1,
+        "hunger": 98.2
       }
     ],
     "active_pet_instances": [
-      1
+      1,
+      2,
+      3,
+      5,
+      4
     ],
-    "last_map": "world",
-    "unlocked_pet_slots": 5
+    "last_map": "pet_area",
+    "unlocked_pet_slots": 5,
+    "daily_missions": [
+      {
+        "id": "unlock_pet_slot",
+        "progress": 0,
+        "claimed": false
+      },
+      {
+        "id": "play_easy",
+        "progress": 1,
+        "claimed": true
+      },
+      {
+        "id": "buy_any_egg",
+        "progress": 1,
+        "claimed": true
+      },
+      {
+        "id": "earn_hard",
+        "progress": 373,
+        "claimed": true
+      }
+    ],
+    "last_mission_reset_date": "2025-07-03",
+    "weekly_mission_points": 100,
+    "last_weekly_reset_date": "2025-06-30",
+    "claimed_weekly_rewards": []
   },
   null,
   null
