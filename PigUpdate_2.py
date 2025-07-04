@@ -73,7 +73,7 @@ DISABLED_COLOR = (180, 180, 180)
 READY_COLOR = (100, 255, 100)
 HEALTH_COLOR = (220, 20, 60); HAPPINESS_COLOR = (255, 215, 0); HUNGER_COLOR = (139, 69, 19)
 BOOST_COLOR = (0, 150, 0)
-MISSION_POINTS_COLOR = (70, 200, 300)
+MISSION_POINTS_COLOR = (60, 180, 255)
 
 # --- Animation Timings ---
 HATCH_ANIM_DURATION = 1500
@@ -160,15 +160,34 @@ except pygame.error:
     pygame.draw.circle(pet_menu_icon, PANEL_BORDER_COLOR, (32, 32), 30); pygame.draw.circle(pet_menu_icon, TEXT_COLOR, (32, 32), 26)
     pet_menu_rect = pet_menu_icon.get_rect(midleft=(20, backpack_rect.bottom + 40))
 
+### MODIFIED BLOCK START ###
+# This block replaces the original mission icon loading.
+# It now creates the icon from a character sprite.
 try:
-    mission_icon_original = pygame.image.load("GUI/mission_icon.png").convert_alpha()
+    # Temporarily create a character object to extract its sprite.
+    # We use a known character sheet path and the already loaded frame_data.
+    # A Ninja character is chosen for the "mission" theme.
+    mission_char_sheet_path = "CHARACTER/Ninja_P1.png"
+    # The NguoiChamSoc class can load the animations from the sheet.
+    mission_char_source = NguoiChamSoc("MissionIconChar", mission_char_sheet_path, frame_data, scale=1.0)
+    
+    # Get the first frame of the 'IdleSouth' (forward-facing) animation.
+    mission_icon_original = mission_char_source.get_current_image("IdleSouth")
+    
+    # Scale the extracted sprite to the desired icon size.
     mission_icon = pygame.transform.scale(mission_icon_original, (64, 64))
+    
+    # Create its rectangle for positioning and clicks.
     mission_icon_rect = mission_icon.get_rect(midleft=(20, pet_menu_rect.bottom + 40))
-except pygame.error:
-    print("Warning: GUI/mission_icon.png not found."); mission_icon = pygame.Surface((64, 64), pygame.SRCALPHA);
+
+except Exception as e:
+    # This is a fallback in case the character files are missing.
+    print(f"Warning: Could not create mission icon from character sprite. Error: {e}")
+    mission_icon = pygame.Surface((64, 64), pygame.SRCALPHA)
     pygame.draw.rect(mission_icon, PANEL_BORDER_COLOR, (10, 5, 44, 54), 0, 5)
     pygame.draw.rect(mission_icon, TEXT_COLOR, (10, 5, 44, 54), 3, 5)
     mission_icon_rect = mission_icon.get_rect(midleft=(20, pet_menu_rect.bottom + 40))
+### MODIFIED BLOCK END ###
 
 try:
     heart_img = pygame.image.load("GUI/heart.png").convert_alpha(); heart_img = pygame.transform.scale(heart_img, (32, 32))
@@ -705,9 +724,9 @@ class MissionManager:
         
         # Define weekly rewards
         self.weekly_rewards = {
-            200: {"type": "item", "id": "random_food", "desc": "Random Food"},
-            500: {"type": "item", "id": "best_toy", "desc": "Toy"},
-            1000: {"type": "item", "id": "best_egg", "desc": "Valuable Egg"}
+            200: {"type": "item", "id": "random_food", "desc": "Random Food Item"},
+            500: {"type": "item", "id": "best_toy", "desc": "Best Toy"},
+            1000: {"type": "item", "id": "best_egg", "desc": "Most Valuable Egg"}
         }
         
         self.check_and_reset_missions()
@@ -740,7 +759,7 @@ class MissionManager:
         possible_missions = [k for k, v in mission_definitions.items() if not v.get("is_comment")]
         
         # Ensure we don't pick more missions than available
-        num_to_pick = min(3, len(possible_missions))
+        num_to_pick = min(4, len(possible_missions))
         chosen_mission_ids = random.sample(possible_missions, num_to_pick)
         
         for mission_id in chosen_mission_ids:
@@ -921,8 +940,7 @@ char_objs = [NguoiChamSoc(p.split("/")[-1].replace(".png",""), p, frame_data, 3.
 for c, p in zip(char_objs, char_paths): c.sheet_path = p
 shop = Building("GUI/shop.png", (0, 5), (256, 256), "Press 'E' to enter Shop", "shop_menu")
 home = Building("GUI/home2.png", (275, -12), (260, 260), "Press 'E' to enter Home", "home_menu")
-storage = Building("GUI/storage.png", (home.rect.right + 50, 33), (170, 170), "Press 'E' to open Storage", "storage_menu")
-world_buildings = [shop, home, storage]
+world_buildings = [shop, home]
 try: shopkeeper = NguoiChamSoc("Shopkeeper", "CHARACTER/Ninja_Style_2_P2.png", frame_data, 10.0)
 except Exception as e: print(f"Warning: Could not load shopkeeper character asset: {e}"); shopkeeper = None
 path_center_x, path_width, fence_y, fence_step = SCREEN_WIDTH*0.45, 150, SCREEN_HEIGHT-120, 48
