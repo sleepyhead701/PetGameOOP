@@ -2,8 +2,8 @@
   {
     "name": "sdada",
     "char": "Modern_Hero_P1",
-    "money": 5,
-    "play_time": 1796.8596510887146,
+    "money": 2385,
+    "play_time": 18741.06795477867,
     "unlocked_incubators": [
       true,
       true,
@@ -14,11 +14,21 @@
       false,
       false
     ],
-    "inventory": {},
+    "inventory": {
+      "food_carrot": 6,
+      "food_meat": 7,
+      "toy_bone": 3,
+      "food_apple": 2,
+      "toy_bear": 4,
+      "toy_robot": 3,
+      "toy_duck": 3,
+      "food_fish": 2,
+      "food_mushroom": 2
+    },
     "incubator_slots": {
       "0": {
         "item_id": "egg_common",
-        "start_time": 1751442351.5895398
+        "start_time": 1751550190.1672132
       }
     },
     "pets": [
@@ -27,15 +37,85 @@
         "pet_id": "Bunny",
         "name": "Oscar",
         "health": 100,
-        "happiness": 76.8701050000049,
-        "hunger": 53.740209999994555
+        "happiness": 74.80185500004029,
+        "hunger": 68.13926999985239
+      },
+      {
+        "instance_id": 2,
+        "pet_id": "Bunny",
+        "name": "ga",
+        "health": 100,
+        "happiness": 84.61362500003058,
+        "hunger": 72.81280999985277
+      },
+      {
+        "instance_id": 3,
+        "pet_id": "Bunny",
+        "name": "asshole",
+        "health": 100,
+        "happiness": 78.9814050000319,
+        "hunger": 75.96280999985312
+      },
+      {
+        "instance_id": 4,
+        "pet_id": "Bunny",
+        "name": "cc",
+        "health": 46.888259999998354,
+        "happiness": 12.935775000004602,
+        "hunger": 33.53915999999082
+      },
+      {
+        "instance_id": 5,
+        "pet_id": "Dog",
+        "name": "GGWP",
+        "health": 100,
+        "happiness": 94.62758500000872,
+        "hunger": 89.25516999996522
+      },
+      {
+        "instance_id": 7,
+        "pet_id": "Bunny",
+        "name": "OK",
+        "health": 100,
+        "happiness": 70.29999999999981,
+        "hunger": 40.600000000000094
       }
     ],
     "active_pet_instances": [
-      1
+      1,
+      2,
+      3,
+      5,
+      4
     ],
     "last_map": "world",
-    "unlocked_pet_slots": 5
+    "unlocked_pet_slots": 5,
+    "daily_missions": [
+      {
+        "id": "buy_any_toy",
+        "progress": 0,
+        "claimed": false
+      },
+      {
+        "id": "feed_medium",
+        "progress": 1,
+        "claimed": false
+      },
+      {
+        "id": "earn_easy",
+        "progress": 57,
+        "claimed": true
+      },
+      {
+        "id": "buy_any_food",
+        "progress": 0,
+        "claimed": false
+      }
+    ],
+    "last_mission_reset_date": "2025-07-04",
+    "weekly_mission_points": 120,
+    "last_weekly_reset_date": "2025-06-30",
+    "claimed_weekly_rewards": []
   },
   null,
   null

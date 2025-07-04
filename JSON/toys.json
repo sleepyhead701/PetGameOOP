@@ -1,0 +1,59 @@
+
+{
+  "toy_ball": {
+    "name": "Bouncy Ball",
+    "description": "A simple but fun ball. Pets love to chase it.",
+    "price": 20,
+    "image_path": "SHOP_ITEMS/toy_ball.png",
+    "effects": {"happiness": 25}
+  },
+  "toy_bone": {
+    "name": "Chew Bone",
+    "description": "A sturdy bone, perfect for chewing and keeping pets occupied.",
+    "price": 25,
+    "image_path": "SHOP_ITEMS/toy_bone.png",
+    "effects": {"happiness": 30}
+  },
+  "toy_puzzle": {
+    "name": "Rainbow Cube",
+    "description": "A clever toy that stimulates a pet's mind.",
+    "price": 150,
+    "image_path": "SHOP_ITEMS/toy_cube.png",
+    "effects": {"happiness": 70}
+  },
+  "toy_duck": {
+    "name": "Rubber Ducky",
+    "description": "It squeaks! An absolute classic that never gets old.",
+    "price": 30,
+    "image_path": "SHOP_ITEMS/toy_duck.png",
+    "effects": {"happiness": 35}
+  },
+  "toy_knight": {
+    "name": "Chess Knight",
+    "description": "For the more sophisticated pet who enjoys a strategic nap.",
+    "price": 60,
+    "image_path": "SHOP_ITEMS/toy_horse.png",
+    "effects": {"happiness": 45}
+  },
+  "toy_robot": {
+    "name": "Toy Robot",
+    "description": "A futuristic friend for your pet. It wiggles!",
+    "price": 120,
+    "image_path": "SHOP_ITEMS/toy_robot.png",
+    "effects": {"happiness": 65}
+  },
+  "toy_bear": {
+    "name": "Teddy Bear",
+    "description": "A soft, cuddly companion for lonely nights.",
+    "price": 50,
+    "image_path": "SHOP_ITEMS/toy_teddybear.png",
+    "effects": {"happiness": 55, "health": 2}
+  },
+  "toy_rings": {
+    "name": "Stacking Rings",
+    "description": "Colorful rings that are fun to knock over.",
+    "price": 40,
+    "image_path": "SHOP_ITEMS/toy_tower.png",
+    "effects": {"happiness": 40}
+  }
+}

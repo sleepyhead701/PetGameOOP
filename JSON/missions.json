@@ -1,0 +1,141 @@
+{
+    "// --- FEEDING MISSIONS ---": {
+        "is_comment": true
+    },
+    "feed_easy": {
+        "title": "Snack Time",
+        "description": "Feed any pet 1 time.",
+        "type": "feed",
+        "target": 1,
+        "points": 15,
+        "reward": { "money": 15 }
+    },
+    "feed_medium": {
+        "title": "A Good Meal",
+        "description": "Feed your pets 3 times in total.",
+        "type": "feed",
+        "target": 3,
+        "points": 30,
+        "reward": { "money": 30, "items": { "food_basic": 1 } }
+    },
+    "feed_hard": {
+        "title": "Full Tummies",
+        "description": "Feed your pets 8 times in total.",
+        "type": "feed",
+        "target": 8,
+        "points": 50,
+        "reward": { "money": 75, "items": { "food_basic": 2 } }
+    },
+
+    "// --- PLAYING MISSIONS ---": {
+        "is_comment": true
+    },
+    "play_easy": {
+        "title": "Play Time",
+        "description": "Play with any pet 1 time.",
+        "type": "play",
+        "target": 1,
+        "points": 15,
+        "reward": { "money": 15 }
+    },
+    "play_medium": {
+        "title": "Having Fun",
+        "description": "Play with your pets 3 times in total.",
+        "type": "play",
+        "target": 3,
+        "points": 30,
+        "reward": { "money": 30, "items": { "toy_basic": 1 } }
+    },
+    "play_hard": {
+        "title": "Full of Joy",
+        "description": "Play with your pets 8 times in total.",
+        "type": "play",
+        "target": 8,
+        "points": 50,
+        "reward": { "money": 75, "items": { "toy_basic": 2 } }
+    },
+
+    "// --- ECONOMIC MISSIONS ---": {
+        "is_comment": true
+    },
+    "spend_easy": {
+        "title": "Small Purchase",
+        "description": "Spend at least 100 coins at the shop.",
+        "type": "spend_money",
+        "target": 100,
+        "points": 25,
+        "reward": { "money": 40 }
+    },
+    "spend_hard": {
+        "title": "Big Spender",
+        "description": "Spend at least 500 coins at the shop.",
+        "type": "spend_money",
+        "target": 500,
+        "points": 60,
+        "reward": { "money": 100, "items": { "egg_common": 1 } }
+    },
+    "earn_easy": {
+        "title": "Pet Profits",
+        "description": "Earn 50 coins from your pets.",
+        "type": "earn_money",
+        "target": 50,
+        "points": 20,
+        "reward": { "money": 20 }
+    },
+    "earn_hard": {
+        "title": "Good Business",
+        "description": "Earn 200 coins from your pets.",
+        "type": "earn_money",
+        "target": 200,
+        "points": 45,
+        "reward": { "money": 50 }
+    },
+
+    "// --- SHOPPING MISSIONS ---": {
+        "is_comment": true
+    },
+    "buy_any_egg": {
+        "title": "Egg Hunter",
+        "description": "Buy any egg from the shop.",
+        "type": "buy_egg",
+        "target": 1,
+        "points": 40,
+        "reward": { "money": 50 }
+    },
+    "buy_any_food": {
+        "title": "Restock the Pantry",
+        "description": "Buy any food item from the shop.",
+        "type": "buy_food",
+        "target": 1,
+        "points": 20,
+        "reward": { "money": 10 }
+    },
+    "buy_any_toy": {
+        "title": "New Entertainment",
+        "description": "Buy any toy from the shop.",
+        "type": "buy_toy",
+        "target": 1,
+        "points": 20,
+        "reward": { "money": 10 }
+    },
+
+    "// --- MAJOR ACTION MISSIONS ---": {
+        "is_comment": true
+    },
+    "hatch_any_egg": {
+        "title": "New Life",
+        "description": "Successfully hatch any egg.",
+        "type": "hatch",
+        "target": 1,
+        "points": 60,
+        "reward": { "money": 100, "items": { "egg_common": 1 } }
+    },
+    "unlock_pet_slot": {
+        "title": "Making Room",
+        "description": "Unlock a new pet slot.",
+        "type": "unlock_pet_slot",
+        "target": 1,
+        "points": 100,
+        "reward": { "money": 250 }
+    }
+}
