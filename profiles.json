@@ -2,8 +2,8 @@
   {
     "name": "sdada",
     "char": "Modern_Hero_P1",
-    "money": 2385,
-    "play_time": 18741.06795477867,
+    "money": 1932,
+    "play_time": 22535.225843191147,
     "unlocked_incubators": [
       true,
       true,
@@ -16,19 +16,24 @@
     ],
     "inventory": {
       "food_carrot": 6,
-      "food_meat": 7,
+      "food_meat": 6,
       "toy_bone": 3,
-      "food_apple": 2,
+      "food_apple": 5,
       "toy_bear": 4,
-      "toy_robot": 3,
-      "toy_duck": 3,
-      "food_fish": 2,
-      "food_mushroom": 2
+      "toy_robot": 6,
+      "toy_duck": 6,
+      "food_fish": 5,
+      "food_mushroom": 2,
+      "food_cake": 3
     },
     "incubator_slots": {
-      "0": {
+      "1": {
+        "item_id": "egg_epic",
+        "start_time": 1751606296.3653643
+      },
+      "2": {
         "item_id": "egg_common",
-        "start_time": 1751550190.1672132
+        "start_time": 1751606297.166094
       }
     },
     "pets": [
@@ -76,9 +81,17 @@
         "instance_id": 7,
         "pet_id": "Bunny",
         "name": "OK",
+        "health": 56.7999999999999,
+        "happiness": 18.099999999999852,
+        "hunger": 0
+      },
+      {
+        "instance_id": 8,
+        "pet_id": "Bunny",
+        "name": "es",
         "health": 100,
-        "happiness": 70.29999999999981,
-        "hunger": 40.600000000000094
+        "happiness": 83.7999999999999,
+        "hunger": 67.60000000000005
       }
     ],
     "active_pet_instances": [
@@ -93,7 +106,7 @@
     "daily_missions": [
       {
         "id": "buy_any_toy",
-        "progress": 0,
+        "progress": 6,
         "claimed": false
       },
       {
@@ -108,7 +121,7 @@
       },
       {
         "id": "buy_any_food",
-        "progress": 0,
+        "progress": 9,
         "claimed": false
       }
     ],

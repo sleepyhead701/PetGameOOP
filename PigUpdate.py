@@ -10,19 +10,15 @@ def load_file_case_insensitive(file_path):
     if os.path.exists(file_path):
         return file_path
     
-    # Get directory and filename
     directory = os.path.dirname(file_path)
     target_filename = os.path.basename(file_path)
     
-    # If directory is empty, use current directory
     if not directory:
         directory = "."
     
-    # Check if directory exists
     if not os.path.exists(directory):
         return None
     
-    # List all files in directory and compare case-insensitively
     try:
         for actual_filename in os.listdir(directory):
             if actual_filename.lower() == target_filename.lower():
@@ -69,21 +65,21 @@ WHITE = (255, 255, 255); GRAY = (100, 100, 100); LOADING_BAR = (200, 200, 200)
 TEXT_COLOR = (92, 53, 15); PANEL_FILL_COLOR = (251, 224, 153); PANEL_BORDER_COLOR = (140, 72, 32)
 BUTTON_HOVER_COLOR = (255, 170, 70)
 LOCKED_SLOT_COLOR = (211, 184, 123)
+MISSION_BOX_COLOR = (230, 205, 140)
 DISABLED_COLOR = (180, 180, 180)
 READY_COLOR = (100, 255, 100)
 HEALTH_COLOR = (220, 20, 60); HAPPINESS_COLOR = (255, 215, 0); HUNGER_COLOR = (139, 69, 19)
 BOOST_COLOR = (0, 150, 0)
-MISSION_POINTS_COLOR = (70, 200, 300)
+MISSION_POINTS_COLOR = (60, 180, 255)
 
 # --- Animation Timings ---
 HATCH_ANIM_DURATION = 1500
 PET_ANIM_SPEED = 120
-EFFECT_DURATION = 1.5 # How long heart/smile icons last, in seconds
-SCROLL_SPEED = 30 # For pet management list
+EFFECT_DURATION = 1.5
+SCROLL_SPEED = 30
 
 # --- Game Progression ---
 MAX_PET_SLOTS = 15
-# Prices to unlock slots 6, 7, 8, ..., 15 (10 prices total)
 PET_SLOT_UNLOCK_PRICES = [50, 150, 400, 1000, 2500, 5000, 10000, 20000, 50000, 100000]
 
 # --- Pet Names ---
@@ -102,6 +98,28 @@ try:
         raise FileNotFoundError("Font not found")
 except (FileNotFoundError, OSError): print("Warning: Font 'PixelEmulator.otf' not found."); font=pygame.font.Font(None, 48); font_small=pygame.font.Font(None, 42); font_info = pygame.font.Font(None, 32); font_plus = pygame.font.Font(None, 60); font_reveal = pygame.font.Font(None, 80)
 
+class NguoiChamSoc:
+    def __init__(self, name, sheet_path, frame_data, scale):
+        self.name = name; self.sheet_path = sheet_path
+        try: self.sheet = pygame.image.load(sheet_path).convert_alpha()
+        except pygame.error: self.sheet = pygame.Surface((32, 32), pygame.SRCALPHA); self.sheet.fill((255, 0, 255))
+        self.scale = scale; self.animations = {}; self.frame_index, self.timer = 0, 0; self.x, self.y = 0, 0; self.last_dir = 'South'
+        self.load_animations(frame_data)
+    def load_animations(self, frame_data):
+        tags = ["IdleSouth","IdleNorth","IdleEast","IdleWest","WalkSouth","WalkNorth","WalkEast","WalkWest"]
+        for tag in tags:
+            frames = sorted([(k,v["frame"]) for k,v in frame_data.items() if f"#{tag}" in k], key=lambda x: x[0])
+            images = [pygame.transform.scale(self.sheet.subsurface(pygame.Rect(f["x"],f["y"],f["w"],f["h"])), (int(f["w"]*self.scale), int(f["h"]*self.scale))) for _,f in frames]
+            self.animations[tag] = images
+    def update(self, dt):
+        self.timer += dt
+        if self.timer > 150:
+            key = "IdleSouth"; length = len(self.animations.get(key,[])); self.frame_index = (self.frame_index +1) % length if length > 0 else 0
+            self.timer = 0
+    def get_current_image(self, key="IdleSouth"): frames = self.animations.get(key) or self.animations.get("IdleSouth", [pygame.Surface((32,32))]); return frames[self.frame_index % len(frames)]
+    def get_rect(self): return self.get_current_image().get_rect(center=(self.x, self.y))
+    def draw(self, surf, pos, key="IdleSouth"): image_to_draw = self.get_current_image(key); rect = image_to_draw.get_rect(center=pos); surf.blit(image_to_draw, rect)
+
 # -------------------- Load Resources --------------------
 try:
     title_img = pygame.image.load("GUI/title_screen2.png"); title_img = pygame.transform.scale(title_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -118,7 +136,6 @@ except pygame.error: print("Warning: ENTITY/currency.jpg not found."); coin_img 
 try:
     clock_img_original = pygame.image.load("ENTITY/clock.png").convert_alpha(); clock_img = pygame.transform.scale(clock_img_original, (48, 48))
 except pygame.error: print("Warning: ENTITY/clock.png not found."); clock_img = pygame.Surface((48,48)); clock_img.fill(WHITE)
-# --- Load Music ---
 try:
     theme_song_path = load_file_case_insensitive("MUSIC/theme.mp3")
     if not theme_song_path:
@@ -146,30 +163,6 @@ try:
     sold_out_img_original = pygame.image.load("GUI/sold.png").convert_alpha()
     sold_out_img = pygame.transform.scale(sold_out_img_original, (128, 128))
 except pygame.error: print("Warning: GUI/sold.png not found."); sold_out_img = pygame.Surface((128, 128), pygame.SRCALPHA); sold_out_text = font_small.render("SOLD", True, (200, 0, 0)); sold_out_img.blit(sold_out_text, (30, 50))
-try:
-    backpack_img_original = pygame.image.load("GUI/backpack.png").convert_alpha()
-    backpack_img = pygame.transform.scale(backpack_img_original, (64, 64))
-    backpack_rect = backpack_img.get_rect(midleft=(20, SCREEN_HEIGHT // 2))
-except pygame.error: print("Warning: GUI/backpack.png not found."); backpack_img = pygame.Surface((64, 64)); backpack_img.fill(PANEL_BORDER_COLOR); backpack_rect = backpack_img.get_rect(midleft=(20, SCREEN_HEIGHT // 2))
-try:
-    pet_menu_icon_original = pygame.image.load("GUI/paw_icon.png").convert_alpha()
-    pet_menu_icon = pygame.transform.scale(pet_menu_icon_original, (64, 64))
-    pet_menu_rect = pet_menu_icon.get_rect(midleft=(20, backpack_rect.bottom + 40))
-except pygame.error:
-    print("Warning: GUI/paw_icon.png not found."); pet_menu_icon = pygame.Surface((64, 64), pygame.SRCALPHA);
-    pygame.draw.circle(pet_menu_icon, PANEL_BORDER_COLOR, (32, 32), 30); pygame.draw.circle(pet_menu_icon, TEXT_COLOR, (32, 32), 26)
-    pet_menu_rect = pet_menu_icon.get_rect(midleft=(20, backpack_rect.bottom + 40))
-
-try:
-    mission_icon_original = pygame.image.load("GUI/mission_icon.png").convert_alpha()
-    mission_icon = pygame.transform.scale(mission_icon_original, (64, 64))
-    mission_icon_rect = mission_icon.get_rect(midleft=(20, pet_menu_rect.bottom + 40))
-except pygame.error:
-    print("Warning: GUI/mission_icon.png not found."); mission_icon = pygame.Surface((64, 64), pygame.SRCALPHA);
-    pygame.draw.rect(mission_icon, PANEL_BORDER_COLOR, (10, 5, 44, 54), 0, 5)
-    pygame.draw.rect(mission_icon, TEXT_COLOR, (10, 5, 44, 54), 3, 5)
-    mission_icon_rect = mission_icon.get_rect(midleft=(20, pet_menu_rect.bottom + 40))
-
 try:
     heart_img = pygame.image.load("GUI/heart.png").convert_alpha(); heart_img = pygame.transform.scale(heart_img, (32, 32))
 except pygame.error: print("Warning: GUI/heart.png not found."); heart_img = pygame.Surface((32,32), pygame.SRCALPHA); pygame.draw.circle(heart_img, (255, 105, 180), (16,16), 14, 0)
@@ -205,7 +198,6 @@ def load_pet_animation_frames(pet_id, anim_key="idle", scale=1.0):
     p_data = pet_data[pet_id]
     frames = []
     
-    # Simplified: All pets now use the "frames" type.
     path_prefix = p_data['animation_paths'].get(anim_key)
     if not path_prefix: return []
     i = 1
@@ -254,7 +246,7 @@ def load_global_storage():
                 data = json.load(f)
                 if isinstance(data, dict) and 'items' in data and 'pets' in data:
                     global_storage_data = data
-                else: # Handle malformed or empty file
+                else:
                     print(f"Warning: '{global_storage_file}' is malformed or empty. Initializing.")
                     global_storage_data = {"items": {}, "pets": []}
         except (json.JSONDecodeError, IOError):
@@ -291,27 +283,48 @@ class TienTe:
             time_rect = time_text.get_rect(topright=(SCREEN_WIDTH - 60, 80)); surface.blit(time_text, time_rect)
             surface.blit(self.clock_icon, (time_rect.left - 58, 70))
 
-class NguoiChamSoc:
-    def __init__(self, name, sheet_path, frame_data, scale):
-        self.name = name; self.sheet_path = sheet_path
-        try: self.sheet = pygame.image.load(sheet_path).convert_alpha()
-        except pygame.error: self.sheet = pygame.Surface((32, 32), pygame.SRCALPHA); self.sheet.fill((255, 0, 255))
-        self.scale = scale; self.animations = {}; self.frame_index, self.timer = 0, 0; self.x, self.y = 0, 0; self.last_dir = 'South'
-        self.load_animations(frame_data)
-    def load_animations(self, frame_data):
-        tags = ["IdleSouth","IdleNorth","IdleEast","IdleWest","WalkSouth","WalkNorth","WalkEast","WalkWest"]
-        for tag in tags:
-            frames = sorted([(k,v["frame"]) for k,v in frame_data.items() if f"#{tag}" in k], key=lambda x: x[0])
-            images = [pygame.transform.scale(self.sheet.subsurface(pygame.Rect(f["x"],f["y"],f["w"],f["h"])), (int(f["w"]*self.scale), int(f["h"]*self.scale))) for _,f in frames]
-            self.animations[tag] = images
+### CHANGE 1: NEW CLASS FOR THE MISSION GIVER ###
+class MissionGiver:
+    def __init__(self, character_obj, stall_img_path, pos, interaction_text, target_scene):
+        self.character_obj = character_obj
+        self.interaction_text = interaction_text
+        self.target_scene = target_scene
+        
+        try:
+            self.stall_image = safe_image_load(stall_img_path).convert_alpha()
+            self.stall_image = pygame.transform.scale(self.stall_image, (256, 256))
+        except pygame.error:
+            print(f"Warning: Mission stall image not found at {stall_img_path}. Creating placeholder.")
+            self.stall_image = pygame.Surface((256, 256), pygame.SRCALPHA)
+            self.stall_image.fill(PANEL_BORDER_COLOR)
+
+        self.rect = self.stall_image.get_rect(topleft=pos)
+        
+        # Position the character behind the counter of the stall
+        self.character_obj.x = self.rect.centerx
+        self.character_obj.y = self.rect.centery - 20 # Adjust Y to be behind the counter
+        
+        # Make a large interaction area in front of the stall
+        self.interaction_rect = pygame.Rect(self.rect.left, self.rect.bottom - 50, self.rect.width, 100)
+
     def update(self, dt):
-        self.timer += dt
-        if self.timer > 150:
-            key = "IdleSouth"; length = len(self.animations.get(key,[])); self.frame_index = (self.frame_index +1) % length if length > 0 else 0
-            self.timer = 0
-    def get_current_image(self, key="IdleSouth"): frames = self.animations.get(key) or self.animations.get("IdleSouth", [pygame.Surface((32,32))]); return frames[self.frame_index % len(frames)]
-    def get_rect(self): return self.get_current_image().get_rect(center=(self.x, self.y))
-    def draw(self, surf, pos, key="IdleSouth"): image_to_draw = self.get_current_image(key); rect = image_to_draw.get_rect(center=pos); surf.blit(image_to_draw, rect)
+        self.character_obj.update(dt)
+
+    def draw(self, surface):
+        # Draw the NPC first so they appear behind the stall
+        self.character_obj.draw(surface, (self.character_obj.x, self.character_obj.y))
+        surface.blit(self.stall_image, self.rect)
+        if DEBUG_MODE:
+            pygame.draw.rect(surface, (0, 255, 0), self.interaction_rect, 1)
+
+    def check_interaction_and_draw_prompt(self, surface, player, interaction_blocked):
+        if not player or interaction_blocked: return False, None
+        player_can_interact = self.interaction_rect.colliderect(player.get_rect())
+        if player_can_interact:
+            prompt_text = font_small.render(self.interaction_text, True, WHITE)
+            prompt_bg = pygame.Surface((prompt_text.get_width() + 20, prompt_text.get_height() + 10), pygame.SRCALPHA)
+            prompt_bg.fill((0, 0, 0, 150)); surface.blit(prompt_bg, (20, SCREEN_HEIGHT - 60)); surface.blit(prompt_text, (30, SCREEN_HEIGHT - 55))
+        return player_can_interact, self.target_scene
 
 class Building:
     def __init__(self, image_path, pos, scale_size, interaction_text, target_scene):
@@ -328,6 +341,9 @@ class Building:
         self.rect = self.image.get_rect(topleft=pos)
         self.interaction_rect = self.rect.inflate(-150, -190)
         self.is_valid = True
+        
+    def update(self, dt): # Add a dummy update method to be consistent with MissionGiver
+        pass
         
     def draw(self, surface):
         if self.is_valid:
@@ -356,18 +372,16 @@ class TuiDo:
             return True
         return False
     
-    def add_pet(self, pet_id, name=None): # Add optional name parameter
+    def add_pet(self, pet_id, name=None):
         new_pet_instance_id = max([p['instance_id'] for p in self.pets] + [0]) + 1
         base_stats = pet_data.get(pet_id, {}).get("base_stats", {"health": 100, "happiness": 100, "hunger": 100})
         
-        # Use the provided name, or choose a random one as a fallback
-        # .strip() removes accidental spaces before/after the name
         pet_name = name.strip() if name and name.strip() else random.choice(PET_NAMES)
         
         new_pet = {
             "instance_id": new_pet_instance_id,
             "pet_id": pet_id,
-            "name": pet_name, # Use the determined name
+            "name": pet_name,
             "health": base_stats["health"],
             "happiness": base_stats["happiness"],
             "hunger": base_stats["hunger"]
@@ -387,7 +401,7 @@ class TuiDo:
         return sorted([(k, v) for k, v in self.items.items() if item_data.get(k, {}).get('category') == 'egg'])
 
 class ThuCung:
-    DRIFT_SPEED = 20 # Pixels per second for floating icons
+    DRIFT_SPEED = 20
 
     def __init__(self, pet_instance_data):
         self.instance_data = pet_instance_data
@@ -407,7 +421,7 @@ class ThuCung:
         self.state_timer = time.time()
         self.next_state_change = random.uniform(3, 7)
         self.speed = 100
-        self.effects = [] # For storing heart/smile popups
+        self.effects = []
 
     def load_animations(self):
         anim_type = self.definition['animation_type']
@@ -418,29 +432,27 @@ class ThuCung:
             if self.definition.get("directional"):
                 for tag in ["IdleSouth", "IdleNorth", "IdleEast", "IdleWest", "WalkSouth", "WalkNorth", "WalkEast", "WalkWest"]:
                     self.animations[tag] = load_pet_animation_frames(self.pet_id, tag, self.scale)
-            else: # Non-directional spritesheet
+            else:
                 self.animations['idle'] = load_pet_animation_frames(self.pet_id, 'idle', self.scale)
                 self.animations['walk'] = load_pet_animation_frames(self.pet_id, 'walk', self.scale)
 
     def show_effect(self, effect_type):
-        for _ in range(5): # Create a burst of 5 icons
+        for _ in range(5):
             offset_x = random.randint(-40, 40)
-            offset_y = random.randint(-80, -20) # Pop up from above the pet
+            offset_y = random.randint(-80, -20)
             self.effects.append({
                 'type': effect_type,
                 'start_time': time.time(),
-                'offset': (offset_x, offset_y) # Store relative offset
+                'offset': (offset_x, offset_y)
             })
 
     def update(self, dt):
-        # Stat decay
         decay = self.definition['stat_decay_rate']
         self.instance_data['hunger'] = max(0, self.instance_data['hunger'] - decay['hunger'] * (dt / 1000.0))
         self.instance_data['happiness'] = max(0, self.instance_data['happiness'] - decay['happiness'] * (dt / 1000.0))
         if self.instance_data['hunger'] <= 0:
             self.instance_data['health'] = max(0, self.instance_data['health'] - decay['health'] * (dt / 1000.0))
 
-        # AI movement
         if time.time() - self.state_timer > self.next_state_change:
             self.state = "walk" if self.state == "idle" else "idle"
             self.state_timer = time.time()
@@ -462,7 +474,6 @@ class ThuCung:
             if rect.left < 0 or rect.right > SCREEN_WIDTH: self.x -= dx; self.direction = random.choice(["East", "West"])
             if rect.top < 0 or rect.bottom > SCREEN_HEIGHT-120: self.y -= dy; self.direction = random.choice(["North", "South"])
 
-        # Animation timing
         self.anim_timer += dt
         if self.anim_timer > PET_ANIM_SPEED:
             self.anim_timer = 0
@@ -470,28 +481,23 @@ class ThuCung:
             if frames:
                 self.frame_index = (self.frame_index + 1) % len(frames)
         
-        # Update effects (remove old ones)
         current_time = time.time()
         self.effects = [e for e in self.effects if current_time - e['start_time'] < EFFECT_DURATION]
     
     def get_current_animation_frames(self):
-        # --- CORRECTED LOGIC ---
         if self.definition.get("directional"): 
             key = f"{self.state.capitalize()}{self.direction}"
             return self.animations.get(key, self.animations.get("IdleSouth", []))
-        else: # For frame-based pets and non-directional spritesheets
+        else:
             key = self.state
             return self.animations.get(key, self.animations.get("idle", []))
 
-
     def draw(self, surface):
-        # Draw the pet
         frames = self.get_current_animation_frames()
         if not frames: return
         self.frame_index = self.frame_index % len(frames)
         image = frames[self.frame_index]
         
-        # --- CORRECTED LOGIC: Flip non-directional pets when moving west ---
         if not self.definition.get("directional") and self.direction == 'West':
             image = pygame.transform.flip(image, True, False)
 
@@ -499,16 +505,13 @@ class ThuCung:
         surface.blit(image, rect)
         if DEBUG_MODE: pygame.draw.rect(surface, (255,0,0), rect, 1)
 
-        # Draw any active effects
         current_time = time.time()
         for effect in self.effects:
             elapsed_time = current_time - effect['start_time']
             
-            # Calculate position: Follow pet, drift upwards
             draw_x = self.x + effect['offset'][0]
             draw_y = self.y + effect['offset'][1] - (elapsed_time * self.DRIFT_SPEED)
 
-            # Calculate fade-out
             alpha = max(0, 255 * (1 - (elapsed_time / EFFECT_DURATION)))
             
             img_to_draw = None
@@ -521,7 +524,6 @@ class ThuCung:
                 img_copy = img_to_draw.copy()
                 img_copy.set_alpha(alpha)
                 surface.blit(img_copy, img_copy.get_rect(center=(draw_x, draw_y)))
-
 
     def get_rect(self):
         frames = self.get_current_animation_frames()
@@ -566,9 +568,7 @@ class CuaHang:
         if time.time() - self.last_restock_time > self.restock_interval: print("Shop is restocking..."); self.restock()
     def restock(self):
         self.current_stock = {}
-        # Slot 1: Always the Common Egg
         self.current_stock["egg_common"] = {"price": item_data["egg_common"]["price"], "quantity": 1}
-        # Slots 2-8: 7 random items
         num_random_items = min(7, len(self.all_sellable_items))
         items_to_sell = random.sample(self.all_sellable_items, num_random_items)
         for item_id in items_to_sell:
@@ -580,18 +580,14 @@ class CuaHang:
     def buy_item(self, item_id, player_currency, player_inventory):
         if item_id in self.current_stock:
             stock_info = self.current_stock[item_id]
-
             if stock_info["quantity"] <= 0:
                 return "Sold out!"
-
             if player_currency.money >= stock_info["price"]:
                 player_currency.money -= stock_info["price"]
                 player_inventory.add_item(item_id)
                 stock_info["quantity"] -= 1
-                print(f"Bought {item_id} for {stock_info['price']}. Stock left: {stock_info['quantity']}")
                 return "Purchase successful!"
             else:
-                print("Not enough money.")
                 return "You don't have enough coins!"
         return "Item not in stock."
 
@@ -638,7 +634,6 @@ class Trung:
                         if player_currency.money >= price:
                             player_currency.money -= price
                             self.unlocked_incubators[i] = True
-                            print(f"Unlocked slot {i+1} for {price} coins.")
                             save_profiles()
                         else:
                             print("Not enough money.")
@@ -703,11 +698,10 @@ class MissionManager:
         self.mission_message = ""
         self.mission_message_timer = 0
         
-        # Define weekly rewards
         self.weekly_rewards = {
             200: {"type": "item", "id": "random_food", "desc": "Random Food"},
-            500: {"type": "item", "id": "best_toy", "desc": "Toy"},
-            1000: {"type": "item", "id": "best_egg", "desc": "Valuable Egg"}
+            500: {"type": "item", "id": "best_toy", "desc": "Best Toy"},
+            1000: {"type": "item", "id": "best_egg", "desc": "Most Valuable Egg"}
         }
         
         self.check_and_reset_missions()
@@ -721,13 +715,11 @@ class MissionManager:
         today_str = datetime.today().strftime("%Y-%m-%d")
         week_start_str = self.get_start_of_week_date()
 
-        # Daily Reset
         if self.profile.get('last_mission_reset_date') != today_str:
             print("Generating new daily missions for", today_str)
             self.profile['last_mission_reset_date'] = today_str
             self.generate_new_daily_missions()
 
-        # Weekly Reset
         if self.profile.get('last_weekly_reset_date') != week_start_str:
             print("Resetting weekly mission progress for week starting", week_start_str)
             self.profile['last_weekly_reset_date'] = week_start_str
@@ -736,10 +728,8 @@ class MissionManager:
         
     def generate_new_daily_missions(self):
         self.profile['daily_missions'] = []
-        # Filter out comments from the mission definitions
         possible_missions = [k for k, v in mission_definitions.items() if not v.get("is_comment")]
         
-        # Ensure we don't pick more missions than available
         num_to_pick = min(3, len(possible_missions))
         chosen_mission_ids = random.sample(possible_missions, num_to_pick)
         
@@ -769,7 +759,6 @@ class MissionManager:
         
         if mission['claimed'] or mission['progress'] < mission_def['target']: return
         
-        # Grant rewards
         reward = mission_def['reward']
         if 'money' in reward:
             self.currency.money += reward['money']
@@ -777,7 +766,6 @@ class MissionManager:
             for item_id, qty in reward['items'].items():
                 self.inventory.add_item(item_id, qty)
         
-        # Add points and mark as claimed
         self.profile['weekly_mission_points'] = self.profile.get('weekly_mission_points', 0) + mission_def['points']
         mission['claimed'] = True
         self.set_message(f"Claimed: {mission_def['title']}!")
@@ -801,7 +789,6 @@ class MissionManager:
                 self.inventory.add_item(best_toy_id)
         
         elif item_id_to_add == "best_egg":
-            # Dynamically find the most expensive egg
             eggs = [(k, v['price']) for k, v in item_data.items() if v.get('category') == 'egg']
             if eggs:
                 best_egg_id = max(eggs, key=lambda item: item[1])[0]
@@ -818,45 +805,39 @@ class MissionManager:
     def draw(self, surface, mouse_pos):
         overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA); overlay.fill((0, 0, 0, 180)); surface.blit(overlay, (0, 0))
         
-        # Main panel
         panel_rect = pygame.Rect(0, 0, 1200, 800); panel_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
         pygame.draw.rect(surface, PANEL_FILL_COLOR, panel_rect, 0, 15); pygame.draw.rect(surface, PANEL_BORDER_COLOR, panel_rect, 6, 15)
         
-        # Title
         title_text = font.render("MISSIONS", True, TEXT_COLOR)
         surface.blit(title_text, title_text.get_rect(centerx=panel_rect.centerx, top=panel_rect.top + 30))
 
-        # --- Daily Missions Section ---
         daily_title = font_small.render("Daily Tasks", True, TEXT_COLOR)
         surface.blit(daily_title, (panel_rect.left + 50, panel_rect.top + 100))
         
-        start_y = panel_rect.top + 150
+        start_y = panel_rect.top + 160
         for i, mission in enumerate(self.profile.get('daily_missions', [])):
             mission_def = mission_definitions[mission['id']]
-            y_pos = start_y + i * 110
+            y_pos = start_y + i * 130
             
-            # Background box
-            mission_box = pygame.Rect(panel_rect.left + 50, y_pos, 700, 100)
-            pygame.draw.rect(surface, LOCKED_SLOT_COLOR, mission_box, 0, 10)
+            mission_box_width = 900
+            mission_box = pygame.Rect(panel_rect.left + 50, y_pos, mission_box_width, 110)
+            pygame.draw.rect(surface, MISSION_BOX_COLOR, mission_box, 0, 10)
             
-            # Text
             mission_title_text = font_small.render(mission_def['title'], True, TEXT_COLOR)
             surface.blit(mission_title_text, (mission_box.left + 20, mission_box.top + 15))
             mission_desc_text = font_info.render(mission_def['description'], True, GRAY)
-            surface.blit(mission_desc_text, (mission_box.left + 20, mission_box.top + 55))
+            surface.blit(mission_desc_text, (mission_box.left + 20, mission_box.top + 60))
             
-            # Progress Bar
             progress = min(mission['progress'], mission_def['target'])
             progress_ratio = progress / mission_def['target']
-            bar_w, bar_h = 300, 25
-            bar_x, bar_y = mission_box.left + 380, mission_box.top + 50
+            bar_w, bar_h = 350, 25
+            bar_x, bar_y = mission_box.left + 500, mission_box.top + 60
             pygame.draw.rect(surface, GRAY, (bar_x, bar_y, bar_w, bar_h), 0, 5)
             pygame.draw.rect(surface, BOOST_COLOR, (bar_x, bar_y, bar_w * progress_ratio, bar_h), 0, 5)
             progress_text = font_info.render(f"{progress}/{mission_def['target']}", True, WHITE)
             surface.blit(progress_text, progress_text.get_rect(center=(bar_x + bar_w/2, bar_y + bar_h/2)))
             
-            # Claim Button
-            claim_btn_rect = pygame.Rect(mission_box.right + 30, y_pos, 150, 100)
+            claim_btn_rect = pygame.Rect(mission_box.right + 20, y_pos, 130, 110)
             can_claim = progress_ratio >= 1 and not mission['claimed']
             
             btn_color = DISABLED_COLOR
@@ -873,14 +854,12 @@ class MissionManager:
             btn_text_surf = font_small.render(btn_text_str, True, WHITE)
             surface.blit(btn_text_surf, btn_text_surf.get_rect(center=claim_btn_rect.center))
 
-        # --- Weekly Progress Section ---
         weekly_panel = pygame.Rect(panel_rect.left + 50, panel_rect.bottom - 200, panel_rect.width - 100, 150)
-        pygame.draw.rect(surface, LOCKED_SLOT_COLOR, weekly_panel, 0, 10)
+        pygame.draw.rect(surface, MISSION_BOX_COLOR, weekly_panel, 0, 10)
         
         weekly_title = font_small.render("Weekly Progress", True, TEXT_COLOR)
         surface.blit(weekly_title, (weekly_panel.left + 20, weekly_panel.top + 15))
         
-        # Weekly Progress Bar
         w_bar_w, w_bar_h = weekly_panel.width - 40, 30
         w_bar_x, w_bar_y = weekly_panel.left + 20, weekly_panel.top + 50
         current_points = self.profile.get('weekly_mission_points', 0)
@@ -890,7 +869,6 @@ class MissionManager:
         points_text = font_small.render(f"{current_points} / 1000", True, WHITE)
         surface.blit(points_text, points_text.get_rect(center= (w_bar_x + w_bar_w/2, w_bar_y + w_bar_h/2)))
         
-        # Weekly Reward Milestones
         for points_needed, reward_info in self.weekly_rewards.items():
             milestone_x = w_bar_x + w_bar_w * (points_needed / 1000.0)
             reward_box = pygame.Rect(0, 0, 120, 50); reward_box.midtop = (milestone_x, w_bar_y + w_bar_h + 5)
@@ -909,7 +887,6 @@ class MissionManager:
             surface.blit(reward_text, reward_text.get_rect(center=reward_box.center))
             pygame.draw.line(surface, box_color, (milestone_x, w_bar_y), (milestone_x, w_bar_y + w_bar_h), 2)
             
-        # Message display
         if self.mission_message and time.time() - self.mission_message_timer < 2.5:
             msg_surf = font_small.render(self.mission_message, True, WHITE); msg_rect = msg_surf.get_rect(center=(panel_rect.centerx, panel_rect.bottom - 220))
             bg_rect = msg_rect.inflate(20, 10); bg_surf = pygame.Surface(bg_rect.size, pygame.SRCALPHA); bg_surf.fill((0, 0, 0, 160))
@@ -922,7 +899,22 @@ for c, p in zip(char_objs, char_paths): c.sheet_path = p
 shop = Building("GUI/shop.png", (0, 5), (256, 256), "Press 'E' to enter Shop", "shop_menu")
 home = Building("GUI/home2.png", (275, -12), (260, 260), "Press 'E' to enter Home", "home_menu")
 storage = Building("GUI/storage.png", (home.rect.right + 50, 33), (170, 170), "Press 'E' to open Storage", "storage_menu")
-world_buildings = [shop, home, storage]
+
+### CHANGE 2: CREATE THE MISSION GIVER NPC ###
+try:
+    mission_giver_char = NguoiChamSoc("MissionGiver", "CHARACTER/Ninja_P1.png", frame_data, 2.0)
+    mission_giver_npc = MissionGiver(
+        character_obj=mission_giver_char,
+        stall_img_path="GUI/mission_stall.png",
+        pos=(SCREEN_WIDTH - 256 - 50, 33), # Position stall in top right
+        interaction_text="Press 'E' for Missions",
+        target_scene="mission_menu"
+    )
+    world_interactables = [shop, home, storage, mission_giver_npc]
+except Exception as e:
+    print(f"FATAL: Could not create Mission NPC. Error: {e}")
+    world_interactables = [shop, home, storage]
+
 try: shopkeeper = NguoiChamSoc("Shopkeeper", "CHARACTER/Ninja_Style_2_P2.png", frame_data, 10.0)
 except Exception as e: print(f"Warning: Could not load shopkeeper character asset: {e}"); shopkeeper = None
 path_center_x, path_width, fence_y, fence_step = SCREEN_WIDTH*0.45, 150, SCREEN_HEIGHT-120, 48
@@ -961,7 +953,7 @@ hatched_pet_info = None
 active_pets = []
 
 # --- Storage Menu state ---
-storage_scene_tab = 'items' # or 'pets'
+storage_scene_tab = 'items'
 storage_player_scroll_y = 0
 storage_global_scroll_y = 0
 storage_selected_player_idx = None
@@ -1035,7 +1027,7 @@ def save_and_quit():
         profile['inventory'] = player_inventory.items
         profile['pets'] = player_inventory.pets
         profile['active_pet_instances'] = [p.instance_data['instance_id'] for p in active_pets]
-        profile['unlocked_pet_slots'] = profiles[selected_profile_idx].get('unlocked_pet_slots', 5) # Save the slot count
+        profile['unlocked_pet_slots'] = profiles[selected_profile_idx].get('unlocked_pet_slots', 5)
         profile['last_map'] = current_map
         
         save_profiles()
@@ -1055,7 +1047,6 @@ while True:
         if money_generation_timer >= 60000:
             money_generation_timer -= 60000
             
-            # --- Money generation from ACTIVE pets ---
             total_money_generated = 0
             for pet_obj in active_pets:
                 pet_instance = pet_obj.instance_data
@@ -1074,7 +1065,6 @@ while True:
                 if mission_manager:
                     mission_manager.update_mission_progress('earn_money', value=total_money_generated)
             
-            # --- Stat decay for INACTIVE pets ---
             all_pets_in_inventory = player_inventory.get_all_pets()
             active_instance_ids = [p.instance_data['instance_id'] for p in active_pets]
             for pet_instance in all_pets_in_inventory:
@@ -1101,32 +1091,30 @@ while True:
         if e.type == pygame.MOUSEBUTTONUP and e.button == 1:
             is_dragging_scrollbar = False
         if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-            if confirming_escape: # If menu is already open, close it.
+            if confirming_escape:
                 confirming_escape = False
-            elif interaction_menu_open: # If a pop-up is open, close it.
+            elif interaction_menu_open:
                 interaction_menu_open = False
                 interaction_pet = None
                 interaction_submenu = None
-            elif scene in ["shop_menu", "home_menu", "inventory_menu", "pet_management_menu", "storage_menu"]: # If in a menu, go back to play.
+            elif scene in ["shop_menu", "home_menu", "inventory_menu", "pet_management_menu", "storage_menu", "mission_menu"]:
                 scene = "play"
-                is_dragging_scrollbar = False # Ensure dragging stops on scene change
-            elif scene == "incubator_egg_select": # Special case for egg selection.
+                is_dragging_scrollbar = False
+            elif scene == "incubator_egg_select":
                 scene = "home_menu"
-            elif scene == "hatching_animation": # Don't allow escape during this animation.
+            elif scene == "hatching_animation":
                 pass
-            else: # As a last resort, open the escape confirmation menu.
+            else:
                 confirming_escape = True
 
-        # --- If the escape menu is open, it captures all input. ---
         if confirming_escape:
             if e.type == pygame.MOUSEBUTTONDOWN:
                 if yes_button_rect.collidepoint(e.pos):
                     save_and_quit()
                 elif no_button_rect.collidepoint(e.pos):
                     confirming_escape = False
-            # Block any other events from propagating to the scenes below.
             continue
-        ### CHANGED BLOCK END ###
+            
         if scene == "name_input":
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_RETURN:
@@ -1162,15 +1150,13 @@ while True:
                             selected_profile_idx=i; profile=profiles[i]
                             if profile is None: player_name_input=""; scene="name_input"
                             else:
-                                # --- FIX FOR OLD/CORRUPTED SAVE FILES ---
                                 if 'unlocked_pet_slots' not in profile or profile['unlocked_pet_slots'] < 5:
                                     profile['unlocked_pet_slots'] = 5
                                 if 'active_pet_instances' not in profile: profile['active_pet_instances'] = []
                                 if 'last_map' not in profile: profile['last_map'] = 'world'
-                                # --- Start the music here! ---
                                 if theme_song_path and not pygame.mixer.music.get_busy():
                                     pygame.mixer.music.load(theme_song_path)
-                                    pygame.mixer.music.play(loops=-1) # -1 means loop forever
+                                    pygame.mixer.music.play(loops=-1)
                                 
                                 if 'daily_missions' not in profile: profile['daily_missions'] = []
                                 if 'last_mission_reset_date' not in profile: profile['last_mission_reset_date'] = "none"
@@ -1204,20 +1190,16 @@ while True:
                                 else: scene="char_select"
                             break
         elif scene == "char_select":
-            # Handle Mouse Clicks
             if e.type == pygame.MOUSEBUTTONDOWN:
                 x,y=e.pos
                 is_arrow_click = False
-                # Left arrow click
                 if 100<x<140 and SCREEN_HEIGHT//2-30<y<SCREEN_HEIGHT//2+30:
                     selection_idx=(selection_idx-1)%len(char_objs)
                     is_arrow_click = True
-                # Right arrow click
                 elif SCREEN_WIDTH-140<x<SCREEN_WIDTH-100 and SCREEN_HEIGHT//2-30<y<SCREEN_HEIGHT//2+30:
                     selection_idx=(selection_idx+1)%len(char_objs)
                     is_arrow_click = True
 
-                # If the click was not on an arrow, select the character
                 if not is_arrow_click:
                     selected=char_objs[selection_idx]
                     profiles[selected_profile_idx]["char"]=selected.name
@@ -1226,14 +1208,12 @@ while True:
                     player.x,player.y=SCREEN_WIDTH//2,SCREEN_HEIGHT//2
                     scene="play"
 
-            # Handle Keyboard Presses
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_LEFT:
                     selection_idx = (selection_idx - 1) % len(char_objs)
                 elif e.key == pygame.K_RIGHT:
                     selection_idx = (selection_idx + 1) % len(char_objs)
-                elif e.key == pygame.K_RETURN: # The 'Enter' key
-                    # Select the current character
+                elif e.key == pygame.K_RETURN:
                     selected=char_objs[selection_idx]
                     profiles[selected_profile_idx]["char"]=selected.name
                     save_profiles()
@@ -1241,7 +1221,6 @@ while True:
                     player.x,player.y=SCREEN_WIDTH//2,SCREEN_HEIGHT//2
                     scene="play"
 
-            # This part remains the same, to keep the character animating
             for char_obj in char_objs:
                 char_obj.update(dt)
         elif scene == "play":
@@ -1251,19 +1230,19 @@ while True:
                         interaction_menu_open = False; interaction_pet = None; interaction_submenu = None
                         continue
                     
-                    interacted_with_building = False
+                    interacted = False
                     if current_map == "world":
-                        for building in world_buildings:
-                            can_interact, target_scene = building.check_interaction_and_draw_prompt(screen, player, False)
+                        for item in world_interactables:
+                            can_interact, target_scene = item.check_interaction_and_draw_prompt(screen, player, False)
                             if can_interact: 
                                 scene = target_scene
-                                if scene == "storage_menu": # Reset storage UI state
+                                if scene == "storage_menu":
                                     storage_selected_player_idx, storage_selected_global_idx = None, None
                                     storage_player_scroll_y, storage_global_scroll_y = 0, 0
-                                interacted_with_building = True
+                                interacted = True
                                 break
                             
-                    if not interacted_with_building and current_map == "pet_area":
+                    if not interacted and current_map == "pet_area":
                         closest_pet = None
                         min_dist = 100 
                         for pet in active_pets:
@@ -1275,9 +1254,9 @@ while True:
                             interaction_pet = closest_pet
                             interaction_menu_open = True
                             interaction_submenu = None
-                            interacted_with_building = True 
+                            interacted = True 
 
-                    if not interacted_with_building:
+                    if not interacted:
                         inventory_selected_item_id = None; scene = "inventory_menu"
                 elif e.key == pygame.K_r:
                     if not interaction_menu_open:
@@ -1286,13 +1265,7 @@ while True:
                         scene = "pet_management_menu"
 
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
-                if backpack_rect.collidepoint(mouse_pos) and not interaction_menu_open:
-                    inventory_selected_item_id = None; scene = "inventory_menu"
-                elif pet_menu_rect.collidepoint(mouse_pos) and not interaction_menu_open:
-                    pet_management_selected_instance_id = None; pet_list_scroll_y = 0; scene = "pet_management_menu"
-                elif mission_icon_rect.collidepoint(mouse_pos) and not interaction_menu_open:
-                    scene = "mission_menu"
-                elif interaction_menu_open:
+                if interaction_menu_open:
                     for action, rect in clickable_interaction_rects.items():
                         if rect.collidepoint(mouse_pos):
                             if action == 'feed_btn':
@@ -1332,23 +1305,16 @@ while True:
                 for i, (item_id, _) in enumerate(shop_items_all):
                     r, c = divmod(i, COLS); box_x = TABLE_X + c * (BOX_SIZE + PADDING); box_y = TABLE_Y + r * (BOX_SIZE + PADDING); box_rect = pygame.Rect(box_x, box_y, BOX_SIZE, BOX_SIZE)
                     if box_rect.collidepoint(mouse_pos):
-                        # Get info *before* the purchase
                         price = shop_manager.current_stock[item_id]['price']
                         item_category = item_data.get(item_id, {}).get('category')
                         
                         message = shop_manager.buy_item(item_id, game_currency, player_inventory)
                         
                         if "successful" in message and mission_manager:
-                            # Update spending mission
                             mission_manager.update_mission_progress('spend_money', value=price)
-                            
-                            # Update category-specific missions
-                            if item_category == 'egg':
-                                mission_manager.update_mission_progress('buy_egg')
-                            elif item_category == 'food':
-                                mission_manager.update_mission_progress('buy_food')
-                            elif item_category == 'toy':
-                                mission_manager.update_mission_progress('buy_toy')
+                            if item_category == 'egg': mission_manager.update_mission_progress('buy_egg')
+                            elif item_category == 'food': mission_manager.update_mission_progress('buy_food')
+                            elif item_category == 'toy': mission_manager.update_mission_progress('buy_toy')
 
                         shop_message = message; shop_message_timer = time.time()
                         break
@@ -1388,7 +1354,7 @@ while True:
         elif scene == "pet_management_menu":
             if e.type == pygame.KEYDOWN and e.key == pygame.K_r:
                 scene = "play"
-                is_dragging_scrollbar = False # Reset on exit
+                is_dragging_scrollbar = False
 
             if e.type == pygame.MOUSEWHEEL:
                 list_panel_rect = pygame.Rect(100, 100, 400, SCREEN_HEIGHT - 200)
@@ -1429,7 +1395,6 @@ while True:
                                 unlocked_slots = profiles[selected_profile_idx]['unlocked_pet_slots']
                                 if len(active_pets) < unlocked_slots:
                                     active_pets.append(ThuCung(selected_pet_instance))
-                    # Unlock slot button
                     unlocked_slots = profiles[selected_profile_idx]['unlocked_pet_slots']
                     if unlocked_slots < MAX_PET_SLOTS:
                         price_index = unlocked_slots - 5
@@ -1446,7 +1411,6 @@ while True:
                                 else:
                                     pet_menu_message = "Not enough coins!"; pet_menu_message_timer = time.time()
         elif scene == "storage_menu":
-            # Define UI layout for event handling
             PANEL_MARGIN, TOP_MARGIN, BOTTOM_MARGIN = 150, 120, 100
             PANEL_Y = TOP_MARGIN
             PANEL_HEIGHT = SCREEN_HEIGHT - TOP_MARGIN - BOTTOM_MARGIN
@@ -1458,7 +1422,6 @@ while True:
                 scene = "play"; storage_selected_player_idx, storage_selected_global_idx = None, None
 
             if e.type == pygame.MOUSEBUTTONDOWN:
-                # Tab switching
                 items_tab_rect = pygame.Rect(SCREEN_WIDTH/2 - 220, 50, 200, 50)
                 pets_tab_rect = pygame.Rect(SCREEN_WIDTH/2 + 20, 50, 200, 50)
                 if items_tab_rect.collidepoint(mouse_pos):
@@ -1466,18 +1429,16 @@ while True:
                 elif pets_tab_rect.collidepoint(mouse_pos):
                     storage_scene_tab = 'pets'; storage_selected_player_idx, storage_selected_global_idx = None, None
 
-                # Transfer buttons
                 store_button_rect = pygame.Rect(SCREEN_WIDTH/2 - 40, SCREEN_HEIGHT/2 - 60, 80, 80)
                 retrieve_button_rect = pygame.Rect(SCREEN_WIDTH/2 - 40, SCREEN_HEIGHT/2 + 40, 80, 80)
 
-                # Transfer Player -> Global (Store)
                 if storage_selected_player_idx is not None and store_button_rect.collidepoint(mouse_pos):
                     if storage_scene_tab == 'items':
                         item_id = player_inventory.get_all_items()[storage_selected_player_idx][0]
                         if player_inventory.remove_item(item_id):
                             global_storage_data['items'][item_id] = global_storage_data['items'].get(item_id, 0) + 1
                             storage_message = f"Moved 1 {item_data[item_id]['name']} to storage."
-                    else: # pets
+                    else:
                         pet_to_move = player_inventory.get_all_pets()[storage_selected_player_idx]
                         if any(p.instance_data['instance_id'] == pet_to_move['instance_id'] for p in active_pets):
                             storage_message = "Cannot move an active pet!"
@@ -1490,7 +1451,6 @@ while True:
                     storage_selected_player_idx, storage_selected_global_idx = None, None
                     storage_message_timer = time.time()
                 
-                # Transfer Global -> Player (Retrieve)
                 elif storage_selected_global_idx is not None and retrieve_button_rect.collidepoint(mouse_pos):
                     if storage_scene_tab == 'items':
                         item_id = sorted(global_storage_data['items'].items())[storage_selected_global_idx][0]
@@ -1499,7 +1459,7 @@ while True:
                             del global_storage_data['items'][item_id]
                         player_inventory.add_item(item_id)
                         storage_message = f"Moved 1 {item_data[item_id]['name']} to inventory."
-                    else: # pets
+                    else:
                         pet_to_move = sorted(global_storage_data['pets'], key=lambda p: p['instance_id'])[storage_selected_global_idx]
                         global_storage_data['pets'].remove(pet_to_move)
                         player_inventory.pets.append(pet_to_move)
@@ -1509,7 +1469,6 @@ while True:
                     storage_selected_player_idx, storage_selected_global_idx = None, None
                     storage_message_timer = time.time()
 
-                # Item/Pet Selection is handled in the drawing loop
                 else:
                     pass
             
@@ -1533,7 +1492,6 @@ while True:
                     if mission_manager:
                         mission_manager.update_mission_progress('hatch')
 
-                    # Clean up all hatching-related data
                     incubator_manager.clear_slot(hatching_info['slot_key'])
                     save_profiles()
                     hatching_info = None
@@ -1551,17 +1509,15 @@ while True:
         elif scene == "mission_menu":
             if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
                 scene = "play"
+                
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1 and mission_manager:
                 panel_rect = pygame.Rect(0, 0, 1200, 800); panel_rect.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
-                # Check daily claims
                 for i in range(len(mission_manager.profile.get('daily_missions', []))):
-                    start_y = panel_rect.top + 150
-                    y_pos = start_y + i * 110
-                    claim_btn_rect = pygame.Rect(panel_rect.left + 50 + 700 + 30, y_pos, 150, 100)
+                    y_pos = (panel_rect.top + 160) + i * 130
+                    claim_btn_rect = pygame.Rect(panel_rect.left + 50 + 900 + 20, y_pos, 130, 110)
                     if claim_btn_rect.collidepoint(mouse_pos):
                         mission_manager.claim_daily_reward(i)
                         break
-                # Check weekly claims
                 w_panel_rect = pygame.Rect(panel_rect.left + 50, panel_rect.bottom - 200, panel_rect.width - 100, 150)
                 w_bar_x = w_panel_rect.left + 20
                 w_bar_w = w_panel_rect.width - 40
@@ -1578,6 +1534,12 @@ while True:
     screen.fill((0, 0, 0))
     
     if scene == 'play': clickable_interaction_rects = {}
+
+    if current_map == "world":
+        for item in world_interactables:
+            if hasattr(item, 'update'):
+                item.update(dt)
+
     if player: player.update(dt)
     if current_map == "pet_area":
         for pet in active_pets: pet.update(dt)
@@ -1624,15 +1586,13 @@ while True:
                 if hatching_frame_index >= len(hatching_animation_frames):
                     pet_id = choose_pet_from_egg(hatching_info['egg_id'])
                     if pet_id:
-                        print(f"Hatched a {pet_id}!")
                         pet_frames = load_pet_animation_frames(pet_id, "idle", scale=15.0) 
                         if pet_frames:
                              hatched_pet_info = {'pet_id': pet_id, 'frames': pet_frames, 'frame_index': 0, 'timer': 0}
                         else:
-                            print(f"Error: Could not load animation for pet '{pet_id}'.")
                             scene = "home_menu"
                     else:
-                        print("Error: Could not determine pet from egg."); scene = "home_menu"
+                        scene = "home_menu"
                 else:
                     current_frame = hatching_animation_frames[hatching_frame_index]
                     scaled_size = (512, 512)
@@ -1640,7 +1600,7 @@ while True:
                     frame_rect = scaled_frame.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2))
                     screen.blit(scaled_frame, frame_rect)
             else:
-                print("Error: No hatching animation frames loaded."); scene = "home_menu"
+                scene = "home_menu"
         else:
             pet_frames = hatched_pet_info['frames']
             if pet_frames:
@@ -1696,7 +1656,8 @@ while True:
                 elif keys[pygame.K_d]: dx=speed; player.last_dir="East"
 
         if current_map == "world":
-            for building in world_buildings: building.draw(screen)
+            for item in world_interactables:
+                item.draw(screen)
             for pos in fence_objects: screen.blit(fence_img, pos)
         elif current_map == "pet_area":
             for pet in active_pets:
@@ -1716,10 +1677,9 @@ while True:
                     player_feet_y = player.get_rect().bottom
                     if fence_y + 50 <= player_feet_y <= fence_y + 100:
                         if not (path_center_x < player.x < path_center_x + path_width):
-                            # Determine side and snap accordingly
-                            if player_feet_y < fence_y + 75:  # coming from above
+                            if player_feet_y < fence_y + 75:
                                 player.y = fence_y + 50 - player.get_rect().height // 2
-                            else:  # coming from below
+                            else:
                                 player.y = fence_y + 100 - player.get_rect().height // 2
                 
                 player_rect = player.get_rect()
@@ -1730,12 +1690,19 @@ while True:
                 if current_map == "pet_area":
                      if player_rect.bottom > SCREEN_HEIGHT: player.y = SCREEN_HEIGHT - player_rect.height / 2
 
+            any_prompt_active = False
+
             if current_map == "world":
                 if player.y > SCREEN_HEIGHT and path_center_x < player.x < path_center_x+path_width:
                     current_map="pet_area"; player.y=10
-
-                for building in world_buildings: building.check_interaction_and_draw_prompt(screen, player, interaction_menu_open)
-            elif current_map == "pet_area":
+                
+                for item in world_interactables:
+                    can_interact, _ = item.check_interaction_and_draw_prompt(screen, player, interaction_menu_open)
+                    if can_interact:
+                        any_prompt_active = True
+                        break
+            
+            if current_map == "pet_area":
                 if player.y < 0:
                     current_map="world"; player.y=SCREEN_HEIGHT-125
                     active_ids = [p.instance_data['instance_id'] for p in active_pets]
@@ -1753,10 +1720,11 @@ while True:
                         prompt_text = font_small.render("Press 'E' to interact", True, WHITE)
                         prompt_bg = pygame.Surface((prompt_text.get_width() + 20, prompt_text.get_height() + 10), pygame.SRCALPHA)
                         prompt_bg.fill((0, 0, 0, 150)); screen.blit(prompt_bg, (20, SCREEN_HEIGHT - 60)); screen.blit(prompt_text, (30, SCREEN_HEIGHT - 55))
+                        any_prompt_active = True
             
-            screen.blit(backpack_img, backpack_rect)
-            screen.blit(pet_menu_icon, pet_menu_rect)
-            screen.blit(mission_icon, mission_icon_rect)
+            ### CHANGE 3: REMOVE ALL SIDE-BAR ICON DRAWING ###
+            # screen.blit(backpack_img, backpack_rect)
+            # screen.blit(pet_menu_icon, pet_menu_rect)
 
             if interaction_menu_open and interaction_pet:
                 if interaction_submenu is None:
@@ -1943,19 +1911,14 @@ while True:
             max_scroll = max(0, total_content_height - list_content_rect.height)
             scrollbar_track_rect = pygame.Rect(list_panel_rect.right - 25, list_content_rect.top, 15, list_content_rect.height)
             
-            # --- SCROLLBAR DRAG UPDATE LOGIC ---
             if is_dragging_scrollbar and max_scroll > 0:
                 visible_ratio = list_content_rect.height / total_content_height
                 handle_height = max(20, scrollbar_track_rect.height * visible_ratio)
                 scrollable_track_space = scrollbar_track_rect.height - handle_height
                 
-                # Calculate the new handle position based on the mouse
                 new_handle_y = mouse_pos[1] - scrollbar_drag_offset_y
-                # Get the handle's position relative to the track's top
                 relative_y = new_handle_y - scrollbar_track_rect.y
-                # Calculate the scroll percentage from the relative position
                 scroll_percent = relative_y / scrollable_track_space if scrollable_track_space > 0 else 0
-                # Update the main scroll variable
                 pet_list_scroll_y = scroll_percent * max_scroll
 
             pet_list_scroll_y = max(0, min(pet_list_scroll_y, max_scroll))
@@ -1981,12 +1944,11 @@ while True:
                 scroll_ratio = pet_list_scroll_y / max_scroll if max_scroll > 0 else 0
                 handle_y = scrollbar_track_rect.top + scroll_ratio * (scrollbar_track_rect.height - handle_height)
                 
-                # Update the handle rect for the next frame's event check
                 scrollbar_handle_rect.update(scrollbar_track_rect.left, handle_y, scrollbar_track_rect.width, handle_height)
                 
                 pygame.draw.rect(screen, GRAY, scrollbar_handle_rect, 0, 8)
             else:
-                scrollbar_handle_rect.update(0,0,0,0) # Reset if not visible
+                scrollbar_handle_rect.update(0,0,0,0)
             
             if unlocked_slots < MAX_PET_SLOTS:
                 price_index = unlocked_slots - 5 
@@ -2045,7 +2007,6 @@ while True:
         elif scene == "storage_menu":
             overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA); overlay.fill((0, 0, 0, 180)); screen.blit(overlay, (0, 0))
             
-            # Define UI layout and draw panels
             PANEL_MARGIN, TOP_MARGIN, BOTTOM_MARGIN = 150, 120, 100
             PANEL_Y, PANEL_HEIGHT = TOP_MARGIN, SCREEN_HEIGHT - TOP_MARGIN - BOTTOM_MARGIN
             PLAYER_PANEL_W = (SCREEN_WIDTH / 2) - PANEL_MARGIN
@@ -2058,7 +2019,6 @@ while True:
             player_title = font.render("Your Profile", True, TEXT_COLOR); screen.blit(player_title, player_title.get_rect(centerx=PLAYER_PANEL_RECT.centerx, top=PLAYER_PANEL_RECT.top + 20))
             global_title = font.render("Shared Storage", True, TEXT_COLOR); screen.blit(global_title, global_title.get_rect(centerx=GLOBAL_PANEL_RECT.centerx, top=GLOBAL_PANEL_RECT.top + 20))
 
-            # Draw tabs
             items_tab_rect = pygame.Rect(SCREEN_WIDTH/2 - 220, 50, 200, 50)
             pets_tab_rect = pygame.Rect(SCREEN_WIDTH/2 + 20, 50, 200, 50)
             pygame.draw.rect(screen, PANEL_BORDER_COLOR if storage_scene_tab == 'items' else LOCKED_SLOT_COLOR, items_tab_rect, 0, 8); pygame.draw.rect(screen, PANEL_BORDER_COLOR, items_tab_rect, 4, 8)
@@ -2066,7 +2026,6 @@ while True:
             items_text = font.render("Items", True, WHITE); screen.blit(items_text, items_text.get_rect(center=items_tab_rect.center))
             pets_text = font.render("Pets", True, WHITE); screen.blit(pets_text, pets_text.get_rect(center=pets_tab_rect.center))
 
-            # Helper to draw one list (player or global)
             def draw_list(panel_rect, is_player_list, scroll_y_ref, selected_idx_ref):
                 content_rect = panel_rect.inflate(-40, -120); content_rect.top = panel_rect.top + 80
                 list_surface = screen.subsurface(content_rect); list_surface.fill(PANEL_FILL_COLOR)
@@ -2075,7 +2034,7 @@ while True:
                 if storage_scene_tab == 'items':
                     source = player_inventory.items if is_player_list else global_storage_data['items']
                     data_list = sorted(source.items())
-                else: # pets
+                else:
                     source = player_inventory.pets if is_player_list else global_storage_data['pets']
                     data_list = sorted(source, key=lambda p: p['instance_id'])
                 
@@ -2102,7 +2061,7 @@ while True:
                         abs_box_rect = box_rect.move(content_rect.topleft)
                         if pygame.mouse.get_pressed()[0] and abs_box_rect.collidepoint(mouse_pos):
                             newly_selected_idx = i
-                else: # pets
+                else:
                     ROW_H, PADDING_Y = 80, 10
                     for i, pet in enumerate(data_list):
                         row_rect = pygame.Rect(10, 10 + i*(ROW_H+PADDING_Y) - scroll_y_ref[0], content_rect.width-20, ROW_H)
@@ -2120,39 +2079,33 @@ while True:
 
                 return newly_selected_idx
 
-            # Use mutable lists for scroll and selection to allow modification inside the function
             player_scroll_ref = [storage_player_scroll_y]; global_scroll_ref = [storage_global_scroll_y]
             player_sel = draw_list(PLAYER_PANEL_RECT, True, player_scroll_ref, storage_selected_player_idx)
             global_sel = draw_list(GLOBAL_PANEL_RECT, False, global_scroll_ref, storage_selected_global_idx)
             storage_player_scroll_y, storage_global_scroll_y = player_scroll_ref[0], global_scroll_ref[0]
             
-            # Update selection state (check for mouse down event to avoid selecting while dragging)
             if pygame.mouse.get_pressed()[0]:
                 if player_sel is not None: storage_selected_player_idx = player_sel; storage_selected_global_idx = None
                 if global_sel is not None: storage_selected_global_idx = global_sel; storage_selected_player_idx = None
 
-            # Draw transfer buttons
             store_button_rect = pygame.Rect(SCREEN_WIDTH/2 - 40, SCREEN_HEIGHT/2 - 60, 80, 80)
             retrieve_button_rect = pygame.Rect(SCREEN_WIDTH/2 - 40, SCREEN_HEIGHT/2 + 40, 80, 80)
             
             can_store = storage_selected_player_idx is not None
-            if can_store and storage_scene_tab == 'pets': # Extra check for active pets
+            if can_store and storage_scene_tab == 'pets':
                 pet_to_move = player_inventory.get_all_pets()[storage_selected_player_idx]
                 if any(p.instance_data['instance_id'] == pet_to_move['instance_id'] for p in active_pets):
                     can_store = False
 
-            # Draw Store button (Player -> Global, points right ->)
             store_color = PANEL_BORDER_COLOR if can_store else DISABLED_COLOR
             pygame.draw.rect(screen, store_color, store_button_rect, 0, 8)
             pygame.draw.polygon(screen, WHITE, [(store_button_rect.right-20, store_button_rect.centery), (store_button_rect.left+20, store_button_rect.top+20), (store_button_rect.left+20, store_button_rect.bottom-20)])
             
             can_retrieve = storage_selected_global_idx is not None
-            # Draw Retrieve button (Global -> Player, points left <-)
             retrieve_color = PANEL_BORDER_COLOR if can_retrieve else DISABLED_COLOR
             pygame.draw.rect(screen, retrieve_color, retrieve_button_rect, 0, 8)
             pygame.draw.polygon(screen, WHITE, [(retrieve_button_rect.left+20, retrieve_button_rect.centery), (retrieve_button_rect.right-20, retrieve_button_rect.top+20), (retrieve_button_rect.right-20, retrieve_button_rect.bottom-20)])
 
-            # Message display
             if storage_message and time.time() - storage_message_timer < 2.5:
                 msg_surf = font_small.render(storage_message, True, WHITE)
                 msg_rect = msg_surf.get_rect(midbottom=(SCREEN_WIDTH/2, SCREEN_HEIGHT-30))
@@ -2161,25 +2114,19 @@ while True:
 
             exit_text=font_small.render("Press 'E' or 'Esc' to exit.",True,GRAY); screen.blit(exit_text,(SCREEN_WIDTH//2-exit_text.get_width()//2,SCREEN_HEIGHT-60))
 
-    ### CHANGED BLOCK START ###
-    # --- Draw Global Overlays (like the Escape Menu) on top of everything else ---
     if confirming_escape:
-        # Draw a semi-transparent overlay
         overlay_dark = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
         overlay_dark.fill((0, 0, 0, 120))
         screen.blit(overlay_dark, (0, 0))
         
-        # Draw the dialog box
         pygame.draw.rect(screen, PANEL_FILL_COLOR, dialog_rect, 0, 10)
         pygame.draw.rect(screen, PANEL_BORDER_COLOR, dialog_rect, 6, 10)
         
-        # Draw the text and buttons
         q_text = font_small.render("Do you want to escape?", True, TEXT_COLOR)
         screen.blit(q_text, q_text.get_rect(center=(dialog_rect.centerx, dialog_rect.top + 60)))
         for r, t in [(yes_button_rect, "Yes"), (no_button_rect, "No")]:
             pygame.draw.rect(screen, BUTTON_HOVER_COLOR if r.collidepoint(mouse_pos) else PANEL_BORDER_COLOR, r, 0, 8)
             screen.blit(font.render(t, True, WHITE), font.render(t, True, WHITE).get_rect(center=r.center))
-    ### CHANGED BLOCK END ###
     
     if game_currency and scene not in ["hatching_animation", "pet_naming"]: game_currency.draw(screen, show_time=(scene=="play"))
     pygame.display.update()
