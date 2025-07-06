@@ -2288,7 +2288,10 @@ while True:
                         row_rect=pygame.Rect(10,10+i*(ROW_H+PADDING_Y)-scroll_y_ref[0],content_rect.width-20,ROW_H)
                         is_selected=selected_idx_ref==i; is_active=is_player_list and any(p.instance_data['instance_id']==pet['instance_id'] for p in active_pets)
                         color=(200,190,120) if is_active else LOCKED_SLOT_COLOR; pygame.draw.rect(list_surface,color,row_rect,0,8)
-                        if icon :=pet_icons.get(petname_text=font_small.render(pet['name'],True,TEXT_COLOR)): list_surface.blit(name_text,name_text.get_rect(centery=row_rect.centery,left=row_rect.left+90))
+                        if icon:=pet_icons.get(pet['pet_id']): 
+                            list_surface.blit(icon,icon.get_rect(centery=row_rect.centery,left=row_rect.left+10))
+                        name_text=font_small.render(pet['name'],True,TEXT_COLOR); 
+                        list_surface.blit(name_text,name_text.get_rect(centery=row_rect.centery,left=row_rect.left+90))
                         pygame.draw.rect(list_surface,BUTTON_HOVER_COLOR if is_selected else PANEL_BORDER_COLOR,row_rect,4 if is_selected else 2,8)
                         abs_row_rect=row_rect.move(content_rect.topleft)
                         if pygame.mouse.get_pressed()[0] and abs_row_rect.collidepoint(mouse_pos) and not storage_transfer_popup_active: newly_selected_idx=i
