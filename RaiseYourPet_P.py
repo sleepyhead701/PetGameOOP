@@ -1,7 +1,60 @@
 import pygame, json, sys, time, os, random
 
+# -------------------- Case-Insensitive File Loading --------------------
+def load_file_case_insensitive(file_path):
+    """
+    Attempts to load a file in a case-insensitive manner.
+    Returns the correct path if found, None if not found.
+    """
+    if os.path.exists(file_path):
+        return file_path
+    
+    # Get directory and filename
+    directory = os.path.dirname(file_path)
+    target_filename = os.path.basename(file_path)
+    
+    # If directory is empty, use current directory
+    if not directory:
+        directory = "."
+    
+    # Check if directory exists
+    if not os.path.exists(directory):
+        return None
+    
+    # List all files in directory and compare case-insensitively
+    try:
+        for actual_filename in os.listdir(directory):
+            if actual_filename.lower() == target_filename.lower():
+                return os.path.join(directory, actual_filename)
+    except OSError:
+        pass
+    
+    return None
+
+def safe_image_load(file_path):
+    """
+    Safely loads an image with case-insensitive file matching.
+    """
+    correct_path = load_file_case_insensitive(file_path)
+    if correct_path:
+        return pygame.image.load(correct_path)
+    else:
+        raise pygame.error(f"File not found: {file_path}")
+
+def safe_json_load(file_path):
+    """
+    Safely loads a JSON file with case-insensitive file matching.
+    """
+    correct_path = load_file_case_insensitive(file_path)
+    if correct_path:
+        with open(correct_path) as f:
+            return json.load(f)
+    else:
+        raise FileNotFoundError(f"File not found: {file_path}")
+
 # -------------------- Initialization --------------------
 pygame.init()
+pygame.mixer.init()
 info = pygame.display.Info()
 SCREEN_WIDTH, SCREEN_HEIGHT = info.current_w, info.current_h
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -21,7 +74,7 @@ HEALTH_COLOR = (220, 20, 60); HAPPINESS_COLOR = (255, 215, 0); HUNGER_COLOR = (1
 BOOST_COLOR = (0, 150, 0)
 
 # --- Animation Timings ---
-HATCH_ANIM_DURATION = 2500
+HATCH_ANIM_DURATION = 1500
 PET_ANIM_SPEED = 120
 EFFECT_DURATION = 1.5 # How long heart/smile icons last, in seconds
 SCROLL_SPEED = 30 # For pet management list
@@ -37,55 +90,68 @@ PET_NAMES = ["Buddy", "Lucy", "Max", "Bella", "Charlie", "Daisy", "Rocky", "Moll
 
 clock = pygame.time.Clock()
 try:
-    font = pygame.font.Font("FONT/PixelEmulator.otf", 36); font_small = pygame.font.Font("FONT/PixelEmulator.otf", 32)
-    font_info = pygame.font.Font("FONT/PixelEmulator.otf", 24)
-    font_plus = pygame.font.Font("FONT/PixelEmulator.otf", 48)
-    font_reveal = pygame.font.Font("FONT/PixelEmulator.otf", 64)
-except FileNotFoundError: print("Warning: Font 'PixelEmulator.otf' not found."); font=pygame.font.Font(None, 48); font_small=pygame.font.Font(None, 42); font_info = pygame.font.Font(None, 32); font_plus = pygame.font.Font(None, 60); font_reveal = pygame.font.Font(None, 80)
+    correct_font_path = load_file_case_insensitive("FONT/PixelEmulator.otf")
+    if correct_font_path:
+        font = pygame.font.Font(correct_font_path, 36); font_small = pygame.font.Font(correct_font_path, 32)
+        font_info = pygame.font.Font(correct_font_path, 24)
+        font_plus = pygame.font.Font(correct_font_path, 48)
+        font_reveal = pygame.font.Font(correct_font_path, 64)
+    else:
+        raise FileNotFoundError("Font not found")
+except (FileNotFoundError, OSError): print("Warning: Font 'PixelEmulator.otf' not found."); font=pygame.font.Font(None, 48); font_small=pygame.font.Font(None, 42); font_info = pygame.font.Font(None, 32); font_plus = pygame.font.Font(None, 60); font_reveal = pygame.font.Font(None, 80)
 
 # -------------------- Load Resources --------------------
+
 try:
-    title_img = pygame.image.load("GUI/title_screen2.png"); title_img = pygame.transform.scale(title_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    title_img = safe_image_load("GUI/title_screen2.png"); title_img = pygame.transform.scale(title_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error: print("Warning: title_screen2.png not found."); title_img = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 try:
-    bg_img = pygame.image.load("GUI/background.jpg").convert(); bg_img = pygame.transform.scale(bg_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    bg_img = safe_image_load("GUI/background.jpg").convert(); bg_img = pygame.transform.scale(bg_img, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error: print("Warning: background.jpg not found."); bg_img = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)); bg_img.fill((30,10,40))
 try:
-    trash_can_img_original = pygame.image.load("GUI/trashcan.png").convert_alpha(); trash_can_img = pygame.transform.scale(trash_can_img_original, (48, 48))
+    trash_can_img_original = safe_image_load("GUI/trashcan.png").convert_alpha(); trash_can_img = pygame.transform.scale(trash_can_img_original, (48, 48))
 except pygame.error: print("Warning: GUI/trashcan.png not found."); trash_can_img = None
 try:
-    coin_img_original = pygame.image.load("ENTITY/currency.jpg").convert_alpha(); coin_img = pygame.transform.scale(coin_img_original, (48, 48))
+    coin_img_original = safe_image_load("ENTITY/currency.jpg").convert_alpha(); coin_img = pygame.transform.scale(coin_img_original, (48, 48))
 except pygame.error: print("Warning: ENTITY/currency.jpg not found."); coin_img = pygame.Surface((48,48)); coin_img.fill((255,215,0))
 try:
-    clock_img_original = pygame.image.load("ENTITY/clock.png").convert_alpha(); clock_img = pygame.transform.scale(clock_img_original, (48, 48))
+    clock_img_original = safe_image_load("ENTITY/clock.png").convert_alpha(); clock_img = pygame.transform.scale(clock_img_original, (48, 48))
 except pygame.error: print("Warning: ENTITY/clock.png not found."); clock_img = pygame.Surface((48,48)); clock_img.fill(WHITE)
+# --- Load Music ---
 try:
-    with open("CHARACTER/flash.json") as f: frame_data = json.load(f)["frames"]
+    theme_song_path = load_file_case_insensitive("MUSIC/theme.mp3")
+    if not theme_song_path:
+        print("Warning: Music file 'MUSIC/theme.mp3' not found.")
+except Exception as e:
+    print(f"Warning: Could not prepare music. Error: {e}")
+    theme_song_path = None
+try:
+    frame_data = safe_json_load("CHARACTER/flash.json")["frames"]
 except FileNotFoundError: print("FATAL ERROR: CHARACTER/flash.json not found."); pygame.quit(); sys.exit()
 try:
-    map_image_original = pygame.image.load("GUI/map.jpg").convert(); play_map_img = pygame.transform.scale(map_image_original, (SCREEN_WIDTH, SCREEN_HEIGHT))
+    map_image_original = safe_image_load("GUI/map.jpg").convert(); play_map_img = pygame.transform.scale(map_image_original, (SCREEN_WIDTH, SCREEN_HEIGHT))
 except pygame.error: print("Warning: GUI/map.jpg not found."); play_map_img = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT)); play_map_img.fill(GRAY)
 map_rect = play_map_img.get_rect()
 try:
-    fence_img = pygame.image.load("ENTITY/fence.png").convert_alpha(); fence_img = pygame.transform.scale(fence_img, (64, 64))
+    fence_img = safe_image_load("ENTITY/fence.png").convert_alpha(); fence_img = pygame.transform.scale(fence_img, (64, 64))
 except pygame.error: print("Warning: ENTITY/fence.png not found."); fence_img = pygame.Surface((64,64)); fence_img.fill(PANEL_BORDER_COLOR)
 try:
-    hatch_img = pygame.image.load("GUI/hatch.png").convert_alpha()
+    hatch_img = safe_image_load("GUI/hatch.png").convert_alpha()
 except pygame.error: print("Warning: GUI/hatch.png not found."); hatch_img = pygame.Surface((128, 64), pygame.SRCALPHA); hatch_img.fill((180, 140, 80))
 try:
-    lock_img_original = pygame.image.load("GUI/lock.png").convert_alpha(); lock_img = pygame.transform.scale(lock_img_original, (64, 64))
+    lock_img_original = safe_image_load("GUI/lock.png").convert_alpha(); lock_img = pygame.transform.scale(lock_img_original, (64, 64))
 except pygame.error: print("Warning: GUI/lock.png not found."); lock_img = pygame.Surface((64, 64), pygame.SRCALPHA); pygame.draw.rect(lock_img, GRAY, (16, 32, 32, 32), border_radius=5); pygame.draw.arc(lock_img, GRAY, (8, 8, 48, 48), 0, 3.14, 8)
 try:
-    sold_out_img_original = pygame.image.load("GUI/sold.png").convert_alpha()
+    sold_out_img_original = safe_image_load("GUI/sold.png").convert_alpha()
     sold_out_img = pygame.transform.scale(sold_out_img_original, (128, 128))
 except pygame.error: print("Warning: GUI/sold.png not found."); sold_out_img = pygame.Surface((128, 128), pygame.SRCALPHA); sold_out_text = font_small.render("SOLD", True, (200, 0, 0)); sold_out_img.blit(sold_out_text, (30, 50))
 try:
-    backpack_img_original = pygame.image.load("GUI/backpack.png").convert_alpha()
+    backpack_img_original = safe_image_load("GUI/backpack.png").convert_alpha()
     backpack_img = pygame.transform.scale(backpack_img_original, (64, 64))
     backpack_rect = backpack_img.get_rect(midleft=(20, SCREEN_HEIGHT // 2))
 except pygame.error: print("Warning: GUI/backpack.png not found."); backpack_img = pygame.Surface((64, 64)); backpack_img.fill(PANEL_BORDER_COLOR); backpack_rect = backpack_img.get_rect(midleft=(20, SCREEN_HEIGHT // 2))
 try:
-    pet_menu_icon_original = pygame.image.load("GUI/paw_icon.png").convert_alpha()
+    pet_menu_icon_original = safe_image_load("GUI/paw_icon.png").convert_alpha()
     pet_menu_icon = pygame.transform.scale(pet_menu_icon_original, (64, 64))
     pet_menu_rect = pet_menu_icon.get_rect(midleft=(20, backpack_rect.bottom + 40))
 except pygame.error:
@@ -93,23 +159,23 @@ except pygame.error:
     pygame.draw.circle(pet_menu_icon, PANEL_BORDER_COLOR, (32, 32), 30); pygame.draw.circle(pet_menu_icon, TEXT_COLOR, (32, 32), 26)
     pet_menu_rect = pet_menu_icon.get_rect(midleft=(20, backpack_rect.bottom + 40))
 try:
-    heart_img = pygame.image.load("GUI/heart.png").convert_alpha(); heart_img = pygame.transform.scale(heart_img, (32, 32))
+    heart_img = safe_image_load("GUI/heart.png").convert_alpha(); heart_img = pygame.transform.scale(heart_img, (32, 32))
 except pygame.error: print("Warning: GUI/heart.png not found."); heart_img = pygame.Surface((32,32), pygame.SRCALPHA); pygame.draw.circle(heart_img, (255, 105, 180), (16,16), 14, 0)
 try:
-    smile_img = pygame.image.load("GUI/smile.png").convert_alpha(); smile_img = pygame.transform.scale(smile_img, (32, 32))
+    smile_img = safe_image_load("GUI/smile.png").convert_alpha(); smile_img = pygame.transform.scale(smile_img, (32, 32))
 except pygame.error: print("Warning: GUI/smile.png not found."); smile_img = pygame.Surface((32,32), pygame.SRCALPHA); pygame.draw.circle(smile_img, HAPPINESS_COLOR, (16,16), 14, 0)
 
 try:
-    with open("JSON/items_p.json") as f: item_data = json.load(f)
+    item_data = safe_json_load("JSON/items_p.json")
 except FileNotFoundError: print("FATAL ERROR: items_p.json not found."); pygame.quit(); sys.exit()
 try:
-    with open("JSON/pets_p.json") as f: pet_data = json.load(f)
+    pet_data = safe_json_load("JSON/pets_p.json")
 except FileNotFoundError: print("FATAL ERROR: pets.json not found."); pygame.quit(); sys.exit()
 
 item_images = {}
 for item_id, data in item_data.items():
     try:
-        img = pygame.image.load(data["image_path"]).convert_alpha()
+        img = safe_image_load(data["image_path"]).convert_alpha()
         item_images[item_id] = pygame.transform.scale(img, (96, 96))
     except pygame.error: print(f"Warning: Item image not found at {data['image_path']}"); img_placeholder = pygame.Surface((96, 96), pygame.SRCALPHA); img_placeholder.fill((255, 0, 255)); item_images[item_id] = img_placeholder
 
@@ -131,11 +197,11 @@ def load_pet_animation_frames(pet_id, anim_key="idle", scale=1.0):
         while True:
             path = f"{path_prefix}{pet_id}_{i}.png"
             try:
-                img = pygame.image.load(path).convert_alpha()
+                img = safe_image_load(path).convert_alpha()
                 w, h = img.get_width(), img.get_height()
                 frames.append(pygame.transform.scale(img, (int(w * scale), int(h * scale))))
                 i += 1
-            except FileNotFoundError:
+            except (FileNotFoundError, pygame.error):
                 if i == 1: print(f"Warning: Could not find first frame for '{pet_id}' at '{path}'")
                 break
     
@@ -143,15 +209,14 @@ def load_pet_animation_frames(pet_id, anim_key="idle", scale=1.0):
         try:
             sheet_path = p_data['animation_paths']['sheet']
             json_path = p_data['animation_paths']['json']
-            sheet = pygame.image.load(sheet_path).convert_alpha()
-            with open(json_path) as f:
-                p_frame_data = json.load(f)['frames']
+            sheet = safe_image_load(sheet_path).convert_alpha()
+            p_frame_data = safe_json_load(json_path)['frames']
             
             # --- UPDATED LOGIC: Handle different spritesheet formats ---
             search_term = ""
             if anim_key == "idle": search_term = "(Idle)"
             elif anim_key == "walk": search_term = "(Movement)"
-            else: search_term = f"#{anim_key}" # For old directional spritesheets like the player
+            else: search_term = f"#{anim_key}"
 
             frame_rects = []
             for k, v in p_frame_data.items():
@@ -181,8 +246,9 @@ for pet_id in pet_data:
 
 
 profile_file = "profiles.json";
-if os.path.exists(profile_file):
-    with open(profile_file) as f: profiles = json.load(f)
+correct_profile_path = load_file_case_insensitive(profile_file)
+if correct_profile_path:
+    with open(correct_profile_path) as f: profiles = json.load(f)
 else: profiles = [None, None, None]
 def save_profiles():
     with open(profile_file, "w") as f: json.dump(profiles, f, indent=2)
@@ -209,7 +275,7 @@ class TienTe:
 class NguoiChamSoc:
     def __init__(self, name, sheet_path, frame_data, scale):
         self.name = name; self.sheet_path = sheet_path
-        try: self.sheet = pygame.image.load(sheet_path).convert_alpha()
+        try: self.sheet = safe_image_load(sheet_path).convert_alpha()
         except pygame.error: self.sheet = pygame.Surface((32, 32), pygame.SRCALPHA); self.sheet.fill((255, 0, 255))
         self.scale = scale; self.animations = {}; self.frame_index, self.timer = 0, 0; self.x, self.y = 0, 0; self.last_dir = 'South'
         self.load_animations(frame_data)
@@ -233,7 +299,7 @@ class Building:
         self.interaction_text = interaction_text
         self.target_scene = target_scene
         try:
-            self.image = pygame.image.load(image_path).convert_alpha()
+            self.image = safe_image_load(image_path).convert_alpha()
             self.image = pygame.transform.scale(self.image, scale_size)
         except pygame.error: 
             print(f"Warning: Building image not found at {image_path}. Creating placeholder.")
@@ -270,29 +336,21 @@ class TuiDo:
             if self.items[item_id] == 0: del self.items[item_id]
             return True
         return False
-    
-    ### MODIFICATION START: Updated add_pet method ###
-    def add_pet(self, pet_id, name=None): # Add optional name parameter
+    def add_pet(self, pet_id):
         new_pet_instance_id = max([p['instance_id'] for p in self.pets] + [0]) + 1
         base_stats = pet_data.get(pet_id, {}).get("base_stats", {"health": 100, "happiness": 100, "hunger": 100})
-        
-        # Use the provided name, or choose a random one as a fallback
-        # .strip() removes accidental spaces before/after the name
-        pet_name = name.strip() if name and name.strip() else random.choice(PET_NAMES)
-        
+        random_name = random.choice(PET_NAMES)
         new_pet = {
             "instance_id": new_pet_instance_id,
             "pet_id": pet_id,
-            "name": pet_name, # Use the determined name
+            "name": random_name,
             "health": base_stats["health"],
             "happiness": base_stats["happiness"],
             "hunger": base_stats["hunger"]
         }
         self.pets.append(new_pet)
-        print(f"Added new pet: {pet_name} the {pet_id} (Instance: {new_pet_instance_id})")
+        print(f"Added new pet: {random_name} the {pet_id} (Instance: {new_pet_instance_id})")
         return new_pet
-    ### MODIFICATION END ###
-
     def get_all_items(self): return sorted(self.items.items())
     def get_all_pets(self): return sorted(self.pets, key=lambda p: p['instance_id'])
     def get_pet_by_instance_id(self, instance_id):
@@ -313,8 +371,11 @@ class ThuCung:
         
         self.x, self.y = random.randint(100, SCREEN_WIDTH - 100), random.randint(100, SCREEN_HEIGHT - 200)
         self.scale = 3.0
+        self.scale_modifier = self.definition.get("scale_modifier", 1.0)
+        self.scale *= self.scale_modifier
         self.animations = {}
         self.load_animations()
+
 
         self.state = "idle"
         self.direction = "South"
@@ -390,11 +451,10 @@ class ThuCung:
         self.effects = [e for e in self.effects if current_time - e['start_time'] < EFFECT_DURATION]
     
     def get_current_animation_frames(self):
-        # --- CORRECTED LOGIC ---
         if self.definition.get("directional"): 
             key = f"{self.state.capitalize()}{self.direction}"
             return self.animations.get(key, self.animations.get("IdleSouth", []))
-        else: # For frame-based pets and non-directional spritesheets
+        else:
             key = self.state
             return self.animations.get(key, self.animations.get("idle", []))
 
@@ -627,9 +687,6 @@ start_x = path_center_x + path_width; fence_objects.extend([(start_x+i*fence_ste
 # -------------------- Game State Variables --------------------
 scene, loading_start = "loading", time.time(); selection_idx, selected, player = 0, None, None
 selected_profile_idx, player_name_input = None, ""
-### MODIFICATION START: Added pet_name_input variable ###
-pet_name_input = ""
-### MODIFICATION END ###
 confirming_delete, delete_target_index = False, None
 game_currency, current_map = None, "world"
 incubator_manager = None
@@ -666,7 +723,7 @@ def load_hatching_animation(egg_id):
     for i in range(1, 23):
         path = f"{base_path}{i}.png"
         try:
-            img = pygame.image.load(path).convert_alpha()
+            img = safe_image_load(path).convert_alpha()
             frames.append(img)
         except pygame.error:
             break
@@ -783,9 +840,6 @@ while True:
             elif scene in ["shop_menu", "home_menu", "inventory_menu", "pet_management_menu"]: scene = "play"
             elif scene == "incubator_egg_select": scene = "home_menu"
             elif scene == "hatching_animation": pass
-            ### MODIFICATION START: Added pet_naming scene to ESCAPE key logic ###
-            elif scene == "pet_naming": pass # Prevent escaping from naming screen
-            ### MODIFICATION END ###
             else: save_and_quit()
         if scene == "name_input":
             if e.type == pygame.KEYDOWN:
@@ -817,7 +871,11 @@ while True:
                                 # ---
                                 if 'active_pet_instances' not in profile: profile['active_pet_instances'] = []
                                 if 'last_map' not in profile: profile['last_map'] = 'world'
-                                
+                                # --- Start the music here! ---
+                                if theme_song_path and not pygame.mixer.music.get_busy():
+                                    pygame.mixer.music.load(theme_song_path)
+                                    pygame.mixer.music.play(loops=-1) # -1 means loop forever
+                                # -----------------------------
                                 money=profile.get("money",10); play_time=profile.get("play_time",0)
                                 inventory_data=profile.get("inventory",{})
                                 pets_data_saved = profile.get("pets", [])
@@ -1014,38 +1072,15 @@ while True:
                                 else:
                                     pet_menu_message = "Not enough coins!"; pet_menu_message_timer = time.time()
 
-        ### MODIFICATION START: Updated hatching logic and added pet_naming logic ###
+
         elif scene == "hatching_animation":
             if e.type == pygame.MOUSEBUTTONDOWN and e.button == 1:
-                # When the player clicks to continue after the pet is revealed...
                 if hatched_pet_info and incubator_manager:
-                    # ...instead of adding the pet, go to the naming screen.
-                    pet_name_input = "" # Reset the input field
-                    scene = "pet_naming" # Transition to our new scene
-        
-        elif scene == "pet_naming":
-            if e.type == pygame.KEYDOWN:
-                if e.key == pygame.K_RETURN:
-                    # When Enter is pressed, add the pet with the custom name
-                    player_inventory.add_pet(hatched_pet_info['pet_id'], pet_name_input)
-                    
-                    # Clean up all hatching-related data
+                    player_inventory.add_pet(hatched_pet_info['pet_id'])
                     incubator_manager.clear_slot(hatching_info['slot_key'])
                     save_profiles()
-                    hatching_info = None
-                    hatching_animation_frames = []
-                    hatched_pet_info = None
-                    
-                    # Return to the home menu
+                    hatching_info = None; hatching_animation_frames = []; hatched_pet_info = None
                     scene = "home_menu"
-
-                elif e.key == pygame.K_BACKSPACE:
-                    pet_name_input = pet_name_input[:-1]
-                
-                # Add a character limit to prevent overly long names
-                elif len(pet_name_input) < 12: 
-                    pet_name_input += e.unicode
-        ### MODIFICATION END ###
     
     # -------------------- Draw Scenes --------------------
     screen.fill((0, 0, 0))
@@ -1134,36 +1169,6 @@ while True:
             continue_rect = continue_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 80))
             screen.blit(continue_text, continue_rect)
 
-    ### MODIFICATION START: Added drawing logic for the pet_naming scene ###
-    elif scene == "pet_naming":
-        # Draw a dark background overlay
-        overlay = pygame.Surface((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 220))
-        screen.blit(overlay, (0, 0))
-
-        # Show the pet that is being named
-        if hatched_pet_info and hatched_pet_info.get('frames'):
-            # Use a large, non-animated image of the new pet
-            pet_image = hatched_pet_info['frames'][0]
-            pet_rect = pet_image.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 - 100))
-            screen.blit(pet_image, pet_rect)
-
-        # Draw the UI text prompt
-        prompt = font.render("Name your new pet:", True, WHITE)
-        prompt_rect = prompt.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 100))
-        screen.blit(prompt, prompt_rect)
-
-        # Draw the text input field with a blinking cursor
-        name_surface = font.render(pet_name_input + "_", True, WHITE)
-        name_rect = name_surface.get_rect(center=(SCREEN_WIDTH // 2, prompt_rect.bottom + 50))
-        screen.blit(name_surface, name_rect)
-
-        # Draw instructions for the player
-        instr_text = font_small.render("Press Enter to confirm", True, GRAY)
-        instr_rect = instr_text.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT - 80))
-        screen.blit(instr_text, instr_rect)
-    ### MODIFICATION END ###
-
     # --- In-Game Scenes ---
     else: 
         screen.blit(play_map_img, (0, 0))
@@ -1181,6 +1186,7 @@ while True:
         if current_map == "world":
             for building in world_buildings: building.draw(screen)
             for pos in fence_objects: screen.blit(fence_img, pos)
+            
         elif current_map == "pet_area":
             for pet in active_pets:
                 pet.draw(screen)
@@ -1199,7 +1205,7 @@ while True:
                     player_feet_y = player.get_rect().bottom
                     if player_feet_y > fence_y:
                         if not (path_center_x < player.x < path_center_x + path_width):
-                            player.y = fence_y - (player.get_rect().height / 2)
+                            player.y = fence_y - (player.get_rect().height / 5)
                 
                 player_rect = player.get_rect()
                 if player_rect.left < 0: player.x = player_rect.width / 2
@@ -1368,7 +1374,7 @@ while True:
             title_text = font.render("INVENTORY", True, TEXT_COLOR)
             screen.blit(title_text, title_text.get_rect(centerx=main_panel_rect.centerx, top=main_panel_rect.top + 30))
 
-            INV_COLS,INV_ROWS,INV_BOX_SIZE,INV_PADDING=10,5,80,10; INV_GRID_W=INV_COLS*(INV_BOX_SIZE+INV_PADDING)-INV_PADDING; INV_GRID_X=main_panel_rect.left+(main_panel_rect.width-INV_GRID_W)//2; INV_GRID_Y=main_panel_rect.top+80+50
+            INV_COLS,INV_ROWS,INV_BOX_SIZE,INV_PADDING=10,5,70,10; INV_GRID_W=INV_COLS*(INV_BOX_SIZE+INV_PADDING)-INV_PADDING; INV_GRID_X=main_panel_rect.left+(main_panel_rect.width-INV_GRID_W)//2; INV_GRID_Y=main_panel_rect.top+80+50
             
             items_in_inv=player_inventory.get_all_items()
             for i in range(INV_COLS*INV_ROWS):
@@ -1494,5 +1500,5 @@ while True:
 
             exit_text=font_small.render("Press 'Esc' to exit.",True,GRAY); screen.blit(exit_text,(SCREEN_WIDTH//2-exit_text.get_width()//2,SCREEN_HEIGHT-60))
 
-    if game_currency and scene not in ["hatching_animation", "pet_naming"]: game_currency.draw(screen, show_time=(scene=="play"))
+    if game_currency and scene != "hatching_animation": game_currency.draw(screen, show_time=(scene=="play"))
     pygame.display.update()

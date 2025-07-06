@@ -1,17 +1,4 @@
 {
-  "items": {
-    "food_corn": 1,
-    "toy_bone": 1,
-    "food_meat": 1
-  },
-  "pets": [
-    {
-      "instance_id": 6,
-      "pet_id": "Cat",
-      "name": "KSKSSKS",
-      "health": 0,
-      "happiness": 0,
-      "hunger": 0
-    }
-  ]
+  "items": {},
+  "pets": []
 }

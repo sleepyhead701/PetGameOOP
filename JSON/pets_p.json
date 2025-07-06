@@ -1,119 +1,200 @@
 {
   "Bunny": {
     "name": "Bunny",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Bunny/", "walk": "PET_WALKING/Bunny/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 5,
-    "scale_modifier": 1
+    "rarity": "Common",
+    "description": "A fluffy bunny with long ears.",
+    "can_attack": false,
+    "scale_modifier": 1.2,
+    "base_money_per_minute": 1,
+    "stat_decay_rate": {"health": 0.05, "happiness": 0.2, "hunger": 0.3},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Bunny/",
+      "walk": "PET_WALKING/Bunny/"
+    }
   },
   "Cat": {
     "name": "Cat",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Cat/", "walk": "PET_WALKING/Cat/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 6,
-    "scale_modifier": 0.75
+    "rarity": "Common",
+    "description": "A curious and independent cat.",
+    "can_attack": true,
+    "damage": 12,
+    "scale_modifier": 0.8,
+    "base_money_per_minute": 2,
+    "stat_decay_rate": {"health": 0.04, "happiness": 0.25, "hunger": 0.25},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Cat/",
+      "walk": "PET_WALKING/Cat/",
+      "attack": "PET_ATTACK/Cat/"
+    }
   },
   "Dog": {
     "name": "Dog",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Dog/", "walk": "PET_WALKING/Dog/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 7,
-    "scale_modifier": 0.75
+    "rarity": "Common",
+    "description": "A loyal and friendly dog.",
+    "can_attack": true,
+    "damage": 15,
+    "scale_modifier": 0.75,
+    "base_money_per_minute": 2,
+    "stat_decay_rate": {"health": 0.04, "happiness": 0.15, "hunger": 0.35},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Dog/",
+      "walk": "PET_WALKING/Dog/",
+      "attack": "PET_ATTACK/Dog/"
+    }
   },
   "Fox": {
     "name": "Fox",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Fox/", "walk": "PET_WALKING/Fox/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 15,
-    "scale_modifier": 1.5
+    "rarity": "Rare",
+    "description": "A cunning and swift fox.",
+    "can_attack": true,
+    "damage": 20,
+    "scale_modifier": 1.5,
+    "base_money_per_minute": 5,
+    "stat_decay_rate": {"health": 0.03, "happiness": 0.2, "hunger": 0.25},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Fox/",
+      "walk": "PET_WALKING/Fox/",
+      "attack": "PET_ATTACK/Fox/"
+    }
   },
   "Frog": {
     "name": "Frog",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Frog/", "walk": "PET_WALKING/Frog/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 12,
-    "scale_modifier": 0.5
+    "rarity": "Rare",
+    "description": "A small, hopping frog.",
+    "can_attack": false,
+    "scale_modifier": 0.8,
+    "base_money_per_minute": 4,
+    "stat_decay_rate": {"health": 0.05, "happiness": 0.3, "hunger": 0.2},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Frog/",
+      "walk": "PET_WALKING/Frog/"
+    }
   },
   "Hedgehog": {
     "name": "Hedgehog",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Hedgehog/", "walk": "PET_WALKING/Hedgehog/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 14,
-    "scale_modifier": 1
+    "rarity": "Rare",
+    "description": "A spiky but gentle hedgehog.",
+    "can_attack": false,
+    "scale_modifier": 0.8,
+    "base_money_per_minute": 5,
+    "stat_decay_rate": {"health": 0.06, "happiness": 0.15, "hunger": 0.15},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Hedgehog/",
+      "walk": "PET_WALKING/Hedgehog/"
+    }
   },
   "Wolf": {
     "name": "Wolf",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Wolf/", "walk": "PET_WALKING/Wolf/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 30,
-    "scale_modifier": 1.33
+    "rarity": "Epic",
+    "description": "A noble and powerful wolf.",
+    "can_attack": true,
+    "damage": 35,
+    "scale_modifier": 1.4,
+    "base_money_per_minute": 15,
+    "stat_decay_rate": {"health": 0.02, "happiness": 0.15, "hunger": 0.3},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Wolf/",
+      "walk": "PET_WALKING/Wolf/",
+      "attack": "PET_ATTACK/Wolf/"
+    }
   },
   "Boar": {
     "name": "Boar",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Boar/", "walk": "PET_WALKING/Boar/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 28,
-    "scale_modifier": 1.33
+    "rarity": "Epic",
+    "description": "A tough and resilient boar.",
+    "can_attack": true,
+    "damage": 40,
+    "scale_modifier": 1.2,
+    "base_money_per_minute": 12,
+    "stat_decay_rate": {"health": 0.01, "happiness": 0.1, "hunger": 0.4},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Boar/",
+      "walk": "PET_WALKING/Boar/",
+      "attack": "PET_ATTACK/Boar/"
+    }
   },
   "Deer": {
     "name": "Deer",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Deer/", "walk": "PET_WALKING/Deer/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.02, "happiness": 0.015, "hunger": 0.03 },
-    "base_money_per_minute": 25,
-    "scale_modifier": 1.66
+    "rarity": "Epic",
+    "description": "A graceful and serene deer.",
+    "can_attack": false,
+    "scale_modifier": 1.5,
+    "base_money_per_minute": 10,
+    "stat_decay_rate": {"health": 0.03, "happiness": 0.25, "hunger": 0.2},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Deer/",
+      "walk": "PET_WALKING/Deer/"
+    }
   },
   "Bear": {
     "name": "Bear",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Bear/", "walk": "PET_WALKING/Bear/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 55,
-    "scale_modifier": 1.66
-  },
-  "Dog2": {
-    "name": "Dog2",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Dog2/", "walk": "PET_WALKING/Dog2/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 50,
-    "scale_modifier": 0.75
-  },
-  "Cat2": {
-    "name": "Cat2",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Cat2/", "walk": "PET_WALKING/Cat2/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.025 },
-    "base_money_per_minute": 50,
-    "scale_modifier": 0.75
+    "rarity": "Legendary",
+    "description": "A mighty and imposing bear.",
+    "can_attack": true,
+    "damage": 50,
+    "scale_modifier": 1.5,
+    "base_money_per_minute": 25,
+    "stat_decay_rate": {"health": 0.01, "happiness": 0.1, "hunger": 0.35},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Bear/",
+      "walk": "PET_WALKING/Bear/",
+      "attack": "PET_ATTACK/Bear/"
+    }
   },
   "Red_panda": {
     "name": "Red Panda",
-    "animation_type": "frames",
-    "animation_paths": { "idle": "PET_IDLE/Red_Panda/", "walk": "PET_WALKING/Red_Panda/" },
-    "base_stats": { "health": 100, "happiness": 100, "hunger": 100 },
-    "stat_decay_rate": { "health": 0.015, "happiness": 0.01, "hunger": 0.02 },
-    "base_money_per_minute": 60,
-    "scale_modifier": 1.2
+    "rarity": "Legendary",
+    "description": "A rare and adorable red panda.",
+    "can_attack": false,
+    "scale_modifier": 1.4,
+    "base_money_per_minute": 30,
+    "stat_decay_rate": {"health": 0.02, "happiness": 0.15, "hunger": 0.2},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Red_panda/",
+      "walk": "PET_WALKING/Red_panda/"
+    }
+  },
+  "Dog2": {
+    "name": "Shiba Inu",
+    "rarity": "Legendary",
+    "description": "A spirited and charming Shiba.",
+    "can_attack": true,
+    "damage": 25,
+    "scale_modifier": 0.8,
+    "base_money_per_minute": 20,
+    "stat_decay_rate": {"health": 0.03, "happiness": 0.1, "hunger": 0.25},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Dog2/",
+      "walk": "PET_WALKING/Dog2/",
+      "attack": "PET_ATTACK/Dog2/"
+    }
+  },
+  "Cat2": {
+    "name": "Black Cat",
+    "rarity": "Legendary",
+    "description": "A sleek and mysterious black cat.",
+    "can_attack": true,
+    "damage": 28,
+    "scale_modifier": 0.9,
+    "base_money_per_minute": 22,
+    "stat_decay_rate": {"health": 0.02, "happiness": 0.2, "hunger": 0.22},
+    "base_stats": {"health": 100, "happiness": 100, "hunger": 100},
+    "animation_paths": {
+      "idle": "PET_IDLE/Cat2/",
+      "walk": "PET_WALKING/Cat2/",
+      "attack": "PET_ATTACK/Cat2/"
+    }
   }
 }

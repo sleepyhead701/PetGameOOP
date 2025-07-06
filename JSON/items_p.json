@@ -162,5 +162,12 @@
     "image_path": "SHOP_ITEMS/toy_cube.png",
     "category": "toy",
     "data": { "effects": {"happiness": 100} }
+  },
+  "item_chicken_meat": {
+      "name": "Chicken Meat",
+      "description": "A tasty piece of meat. Restores a good amount of hunger and some health.",
+      "category": "food",
+      "image_path": "SHOP_ITEMS/chicken.png",
+      "data": {"effects": {"health": 20, "hunger": 30, "happiness": 10} }
   }
 }

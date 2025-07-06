@@ -1,0 +1,42 @@
+{
+  "Chicken": {
+    "name": "Chicken",
+    "health": 50,
+    "animation_paths": {
+      "idle": "ENTITY/Chicken/PET_IDLE/Chicken/",
+      "walk": "ENTITY/Chicken/PET_WALKING/Chicken/"
+    },
+    "drop_item": "item_chicken_meat",
+    "drop_chance": 0.5
+  },
+  "Dark_Brown_Chicken": {
+    "name": "Dark Brown Chicken",
+    "health": 50,
+    "animation_paths": {
+      "idle": "ENTITY/Chicken/PET_IDLE/Dark_Brown_Chicken/",
+      "walk": "ENTITY/Chicken/PET_WALKING/Dark_Brown_Chicken/"
+    },
+    "drop_item": "item_chicken_meat",
+    "drop_chance": 0.5
+  },
+  "Dark_Chicken": {
+    "name": "Dark Chicken",
+    "health": 50,
+    "animation_paths": {
+      "idle": "ENTITY/Chicken/PET_IDLE/Dark_Chicken/",
+      "walk": "ENTITY/Chicken/PET_WALKING/Dark_Chicken/"
+    },
+    "drop_item": "item_chicken_meat",
+    "drop_chance": 0.5
+  },
+  "Light_Brown_Chicken": {
+    "name": "Light Brown Chicken",
+    "health": 50,
+    "animation_paths": {
+      "idle": "ENTITY/Chicken/PET_IDLE/Light_Brown_Chicken/",
+      "walk": "ENTITY/Chicken/PET_WALKING/Light_Brown_Chicken/"
+    },
+    "drop_item": "item_chicken_meat",
+    "drop_chance": 0.5
+  }
+}
